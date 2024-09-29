@@ -6,17 +6,53 @@ POST http://localhost:5125/api/customers
 Content-Type: application/json
 
 {
-  "FirstName": "John",
-  "LastName": "Doe",
-  "Email": "john.doe@example.com",
-  "Password": "securePassword123",
-  "Phone": "+1234567890"
+  "FirstName": "Ghadah",
+  "LastName": "Aljohani",
+  "Email": "Ghadah@example.com",
+  "Password": "securePassword1422",
+  "Phone": "0987654321"
+}
+
+###
+Get http://localhost:5125/api/customers/18e51fd1-8275-4be7-a995-138f86041fd0
+###
+Put http://localhost:5125/api/customers/18e51fd1-8275-4be7-a995-138f86041fd0
+Content-Type: application/json
+
+{
+  "lastName": "Deef Allah",
+  "phone": "1234567890"
+}
+
+###
+Delete http://localhost:5125/api/customers/40e9ce94-86da-49d5-ade5-64f32f5ca8e5
+
+
+###
+Get http://localhost:5125/api/addresses
+###
+POST http://localhost:5125/api/addresses 
+Content-Type: application/json
+
+{
+  "AddressName": "321 Maple Avenue",
+  "StreetNumber": "654",
+  "StreetName": "Maple Avenue2",
+  "City": "Springfield2",
+  "State": "Illinois2"
 }
 
 ###
 
-Get http://localhost:5125/api/customers/06d0d271-14ab-4838-b603-153541a578e1
+Get http://localhost:5125/api/addresses/c4a8f771-b885-4e8f-b244-b714f2503169
 
 ###
+Put http://localhost:5125/api/addresses/c4a8f771-b885-4e8f-b244-b714f2503169
+Content-Type: application/json
 
-DELETE http://localhost:5125/api/customers/de8449e5-b825-4796-a773-afa7b8be567e
+{
+  "addressName": "alazizyah"
+}
+###
+
+DELETE  http://localhost:5125/api/addresses/c4a8f771-b885-4e8f-b244-b714f2503169

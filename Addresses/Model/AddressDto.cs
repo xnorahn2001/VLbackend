@@ -1,7 +1,8 @@
-// Adress Dto to update an existing Adress for the customer
+// Adress Dto to return specific data 
 
-public class UpdateAdressDto
+public class AddressDto
 {
+    public string? AddressName { get; set; } 
     public string? StreetNumber { get; set; }
     public string? StreetName { get; set; }
     public string? City { get; set; }

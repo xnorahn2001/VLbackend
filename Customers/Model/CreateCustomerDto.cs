@@ -20,6 +20,6 @@ public class CreateCustomerDto
     public string Password { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Phone is required.")]
-    [StringLength(10, ErrorMessage = "Phone number must be exactly 10 characters.", MinimumLength = 10)]
+    [StringLength(10, ErrorMessage = "Phone number must be exactly 10 characters.")]
     public string Phone { get; set; } = string.Empty;
 }

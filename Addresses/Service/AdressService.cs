@@ -2,28 +2,26 @@ using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-public class CustomerService
+public class AddressService
 {
     private readonly AppDBContext _appDbContext;
     private readonly IMapper _mapper;
 
-    public CustomerService(AppDBContext appDbContext, IMapper mapper)
+    public AddressService(AppDBContext appDbContext, IMapper mapper)
     {
         _appDbContext = appDbContext;
         _mapper = mapper;
     }
 
-    public async Task<CustomerDto> CreateCustomerAsyncService(CreateCustomerDto newCustomer)
+    public async Task<AddressDto> CreateAddressAsyncService(CreateAddressDto newAddress)
     {
         try
         {
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(newCustomer.Password);
-            newCustomer.Password = hashedPassword;
-            var customer = _mapper.Map<Customer>(newCustomer);
-            await _appDbContext.Customers.AddAsync(customer);
+            var address = _mapper.Map<Address>(newAddress);
+            await _appDbContext.Addresses.AddAsync(address);
             await _appDbContext.SaveChangesAsync();
-            var customerData = _mapper.Map<CustomerDto>(customer);
-            return customerData;
+            var addressData = _mapper.Map<AddressDto>(address);
+            return addressData;
         }
         catch (DbUpdateException dbEx)
         {
@@ -40,13 +38,13 @@ public class CustomerService
 
     }
 
-    public async Task<List<CustomerDto>> GetCustomersAsyncService()
+    public async Task<List<AddressDto>> GetAddressAsyncService()
     {
         try
         {
-            var customers = await _appDbContext.Customers.ToListAsync();
-            var customerData = _mapper.Map<List<CustomerDto>>(customers);
-            return customerData;
+            var addresses = await _appDbContext.Addresses.ToListAsync();
+            var addressData = _mapper.Map<List<AddressDto>>(addresses);
+            return addressData;
         }
         catch (DbUpdateException dbEx)
         {
@@ -62,17 +60,17 @@ public class CustomerService
         }
 
     }
-    public async Task<CustomerDto?> GetCustomerByIdAsyncService(Guid customerId)
+    public async Task<AddressDto?> GetAddressByIdAsyncService(Guid addressId)
     {
         try
         {
-            var customer = await _appDbContext.Customers.FindAsync(customerId);
-            if (customer == null)
+            var address = await _appDbContext.Addresses.FindAsync(addressId);
+            if (address == null)
             {
                 return null;
             }
-            var customerData = _mapper.Map<CustomerDto>(customer);
-            return customerData;
+            var addressData = _mapper.Map<AddressDto>(address);
+            return addressData;
         }
         catch (DbUpdateException dbEx)
         {
@@ -88,16 +86,16 @@ public class CustomerService
         }
     }
 
-    public async Task<bool> DeleteCustomerByIdAsyncService(Guid customerId)
+    public async Task<bool> DeleteAddressByIdAsyncService(Guid addressId)
     {
         try
         {
-            var customer = await _appDbContext.Customers.FindAsync(customerId);
-            if (customer == null)
+            var address = await _appDbContext.Addresses.FindAsync(addressId);
+            if (address == null)
             {
                 return false;
             }
-            _appDbContext.Customers.Remove(customer);
+            _appDbContext.Addresses.Remove(address);
             await _appDbContext.SaveChangesAsync();
             return true;
         }
@@ -115,30 +113,27 @@ public class CustomerService
         }
     }
 
-    public async Task<CustomerDto?> UpdateCustomerByIdAsyncService(Guid customerId, UpdateCustomerDto updateCustomer)
+    public async Task<AddressDto?> UpdateAddressByIdAsyncService(Guid addressId, UpdateAddressDto updateAddress)
     {
         try
         {
-            var customer = await _appDbContext.Customers.FindAsync(customerId);
-            if (customer == null)
+            var address = await _appDbContext.Addresses.FindAsync(addressId);
+            if (address == null)
             {
                 return null;
             }
 
-            customer.FirstName = updateCustomer.FirstName ?? customer.FirstName;
-            customer.LastName = updateCustomer.LastName ?? customer.LastName;
-            customer.Email = updateCustomer.Email ?? customer.Email;
-            if (updateCustomer.Password != null)
-            {
-                customer.Password = BCrypt.Net.BCrypt.HashPassword(updateCustomer.Password);
-            }
-            customer.Phone = updateCustomer.Phone ?? customer.Phone;
+            address.AddressName = updateAddress.AddressName ?? address.AddressName;
+            address.StreetName = updateAddress.StreetName ?? address.StreetName;
+            address.StreetNumber = updateAddress.StreetNumber ?? address.StreetNumber;
+            address.City = updateAddress.City ?? address.City;
+            address.State = updateAddress.State ?? address.State;
 
-            _appDbContext.Update(customer);
+            _appDbContext.Update(address);
             await _appDbContext.SaveChangesAsync();
 
-            var customerData = _mapper.Map<CustomerDto>(customer);
-            return customerData;
+            var addressData = _mapper.Map<AddressDto>(address);
+            return addressData;
         }
         catch (DbUpdateException dbEx)
         {

@@ -25,7 +25,7 @@ public class CustomerController : ControllerBase
             return BadRequest(new { Message = "Validation failed", Errors = errors });
         }
         try
-        {
+        {   
             var customer = await _customerService.CreateCustomerAsyncService(newCustomer);
             return ApiResponses.Created(customer, "Customer created successfully");
         }
@@ -68,7 +68,7 @@ public class CustomerController : ControllerBase
     {
         try
         {
-            var customer = await _customerService.GetCustomerByAsyncService(customerId);
+            var customer = await _customerService.GetCustomerByIdAsyncService(customerId);
             if (customer == null)
             {
                 return ApiResponses.NotFound("Customer does not exisit");
@@ -110,8 +110,8 @@ public class CustomerController : ControllerBase
     }
 
     // Put: "api/customers/{customersId}" => update customer by id 
-    [HttpPut]
-    public async Task<IActionResult> UpdataCustomerByIdAsync(Guid customerId, [FromBody] Customer updateCustomer)
+    [HttpPut("{customerId}")]
+    public async Task<IActionResult> UpdataCustomerByIdAsync(Guid customerId, [FromBody] UpdateCustomerDto updateCustomer)
     {
         if (!ModelState.IsValid)
         {
