@@ -1,0 +1,22 @@
+GET http://localhost:5125/api/customers 
+
+###
+
+POST http://localhost:5125/api/customers 
+Content-Type: application/json
+
+{
+  "FirstName": "John",
+  "LastName": "Doe",
+  "Email": "john.doe@example.com",
+  "Password": "securePassword123",
+  "Phone": "+1234567890"
+}
+
+###
+
+Get http://localhost:5125/api/customers/06d0d271-14ab-4838-b603-153541a578e1
+
+###
+
+DELETE http://localhost:5125/api/customers/de8449e5-b825-4796-a773-afa7b8be567e
