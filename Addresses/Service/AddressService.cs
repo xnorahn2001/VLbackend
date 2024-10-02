@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 public interface IAddress
 {
     Task<AddressDto> CreateAddressAsyncService(CreateAddressDto newAddress);
-    Task<List<AddressDto>> GetAddressesAsyncService();
+    Task<List<AddressDto>> GetAddressesAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder);
     Task<AddressDto?> GetAddressByIdAsyncService(Guid addressId);
     Task<bool> DeleteAddressByIdAsyncService(Guid addressId);
     Task<AddressDto?> UpdateAddressByIdAsyncService(Guid addressId, UpdateAddressDto updateAddress);
@@ -27,7 +27,8 @@ public class AddressService : IAddress
         {
             var address = _mapper.Map<Address>(newAddress);
             var customer = await _appDbContext.Customers.FirstOrDefaultAsync(c => c.CustomerId == newAddress.CustomerId);
-            if (customer == null){
+            if (customer == null)
+            {
                 throw new Exception("this customer does not exisit");
             }
             address.Customer = customer;
@@ -51,12 +52,32 @@ public class AddressService : IAddress
 
     }
 
-    public async Task<List<AddressDto>> GetAddressesAsyncService()
+    public async Task<List<AddressDto>> GetAddressesAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder)
     {
         try
         {
             var addresses = await _appDbContext.Addresses.Include(a => a.Customer).ToListAsync();
-            var addressData = _mapper.Map<List<AddressDto>>(addresses);
+            // using query to search for all the customers whos matching the name otherwise return null
+            var filterAddresses = addresses.AsQueryable();
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                filterAddresses = filterAddresses.Where(a => a.AddressName.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+                if (filterAddresses.Count() == 0)
+                {
+                    var exisitingAddress = _mapper.Map<List<AddressDto>>(filterAddresses);
+                    return exisitingAddress;
+                }
+            }
+            // sort the list of address dependes on their city or state as desc or asc othwewise shows the default
+            filterAddresses = sortBy?.ToLower() switch
+            {
+                "city" => sortOrder == "desc" ? filterAddresses.OrderByDescending(a => a.City) : filterAddresses.OrderBy(a => a.City),
+                "state" => sortOrder == "desc" ? filterAddresses.OrderByDescending(a => a.State) : filterAddresses.OrderBy(a => a.State),
+                _ => filterAddresses.OrderBy(a => a.City) // default 
+            };
+            // return the pagination result
+            var paginationResult = filterAddresses.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            var addressData = _mapper.Map<List<AddressDto>>(paginationResult);
             return addressData;
         }
         catch (DbUpdateException dbEx)

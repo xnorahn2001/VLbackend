@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore;
 public interface ICustomer
 {
     Task<CustomerDto> CreateCustomerAsyncService(CreateCustomerDto newCustomer);
-    Task<List<CustomerDto>> GetCustomersAsyncService();
+    Task<List<CustomerDto>> GetCustomersAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder);
     Task<CustomerDto?> GetCustomerByIdAsyncService(Guid customerId);
     Task<bool> DeleteCustomerByIdAsyncService(Guid customerId);
     Task<CustomerDto?> UpdateCustomerByIdAsyncService(Guid customerId, UpdateCustomerDto updateCustomer);
 }
-public class CustomerService: ICustomer
+public class CustomerService : ICustomer
 {
     private readonly AppDBContext _appDbContext;
     private readonly IMapper _mapper;
@@ -48,12 +48,33 @@ public class CustomerService: ICustomer
 
     }
 
-    public async Task<List<CustomerDto>> GetCustomersAsyncService()
+    public async Task<List<CustomerDto>> GetCustomersAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder)
     {
         try
         {
             var customers = await _appDbContext.Customers.ToListAsync();
-            var customerData = _mapper.Map<List<CustomerDto>>(customers);
+
+            // using query to search for all the customers whos matching the name otherwise return null
+            var filterCustomers = customers.AsQueryable();
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                filterCustomers = filterCustomers.Where(c => c.FirstName.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+                if (filterCustomers.Count() == 0)
+                {
+                    var exisitingCustomer = _mapper.Map<List<CustomerDto>>(filterCustomers);
+                    return exisitingCustomer;
+                }
+            }
+            // sort the list of customers dependes on first or last name as desc or asc othwewise shows the default
+            filterCustomers = sortBy?.ToLower() switch
+            {
+                "firstname" => sortOrder == "desc" ? filterCustomers.OrderByDescending(c => c.FirstName) : filterCustomers.OrderBy(c => c.FirstName),
+                "lastname" => sortOrder == "desc" ? filterCustomers.OrderByDescending(c => c.LastName) : filterCustomers.OrderBy(c => c.LastName),
+                _ => filterCustomers.OrderBy(c => c.FirstName) // default 
+            };
+            // return the result in pagination 
+            var paginationResult = filterCustomers.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            var customerData = _mapper.Map<List<CustomerDto>>(paginationResult);
             return customerData;
         }
         catch (DbUpdateException dbEx)

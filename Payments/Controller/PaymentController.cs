@@ -40,14 +40,14 @@ public class PaymentController : ControllerBase
 
     // Get: "/api/v1/payments" => get all the payments 
     [HttpGet]
-    public async Task<IActionResult> GetPaymentAsync()
+    public async Task<IActionResult> GetPaymentAsync(int pageNumber = 1, int pageSize = 3, string? searchQuery = null)
     {
         try
         {
-            var payments = await _paymentService.GetPaymentsAsyncService();
+            var payments = await _paymentService.GetPaymentsAsyncService(pageNumber, pageSize, searchQuery);
             if (payments.Count() == 0)
             {
-                return ApiResponses.NotFound("The list of payments is empty");
+                return ApiResponses.NotFound("The list of payments is empty or you try to search fot net exisiting card number");
             }
             return ApiResponses.Success(payments, "Return the list of payments successfully");
         }

@@ -41,14 +41,18 @@ public class CustomerController : ControllerBase
 
     // Get: "/api/v1/customers" => get all the customers 
     [HttpGet]
-    public async Task<IActionResult> GetCustomersAsync()
+    public async Task<IActionResult> GetCustomersAsync(int pageNumber = 1, int pageSize = 3, string? searchQuery = null, string? sortBy = null, string? sortOrder = "asc")
     {
         try
         {
-            var customers = await _customerService.GetCustomersAsyncService();
+            if (pageNumber < 1 || pageSize < 1)
+            {
+                return ApiResponses.BadRequest("Page number and page size should be greater than 0.");
+            }
+            var customers = await _customerService.GetCustomersAsyncService(pageNumber, pageSize, searchQuery, sortBy, sortOrder);
             if (customers.Count() == 0)
             {
-                return ApiResponses.NotFound("The list of customers is empty");
+                return ApiResponses.NotFound("The list of customers is empty or you try to search for not exisiting customer.");
             }
             return ApiResponses.Success(customers, "Return the list of customers successfully");
         }

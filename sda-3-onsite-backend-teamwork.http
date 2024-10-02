@@ -1,4 +1,4 @@
-GET http://localhost:5125/api/v1/customers 
+GET http://localhost:5125/api/v1/customers?pageNumber=1&pageSize=1&searchQuery=Ghadah&sortBy=lastname&sortOrder=desc
 
 ###
 
@@ -28,7 +28,7 @@ Content-Type: application/json
 Delete http://localhost:5125/api/v1/customers/f3fba3fa-2422-4959-a9f3-b5e00260deb2
 
 ###
-Get http://localhost:5125/api/v1/addresses
+Get http://localhost:5125/api/v1/addresses?pageNumber=1&pageSize=6&sortBy=state&sortOrder=desc
 ###
 POST http://localhost:5125/api/v1/addresses 
 Content-Type: application/json
@@ -59,7 +59,7 @@ DELETE  http://localhost:5125/api/v1/addresses/a2decf9f-9799-435a-a4c0-46cd002d9
 
 ###
 
-Get http://localhost:5125/api/v1/payments
+Get http://localhost:5125/api/v1/payments?pageNumber=1&pageSize=3&searchQuery=111111111111111199911
 
 ###
 
@@ -68,7 +68,7 @@ Content-Type: application/json
 
 {
     "paymentMethod": "Cash",  
-    "cardNumber": "11111111111111111110011",  
+    "cardNumber": "111111111111111199911",  
     "totalPrice":  222,
     "CustomerId": "2ac866ba-534e-4319-ac15-eaa46cf42d7d"
   

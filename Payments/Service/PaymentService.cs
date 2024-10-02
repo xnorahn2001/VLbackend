@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 public interface IPayment
 {
     Task<PaymentDto> CreatePaymentAsyncService(CreatePaymentDto newPayment);
-    Task<List<PaymentDto>> GetPaymentsAsyncService();
+    Task<List<PaymentDto>> GetPaymentsAsyncService(int pageNumber, int pageSize, string searchQuery);
     Task<PaymentDto?> GetPaymentByIdAsyncService(Guid paymentId);
     Task<bool> DeletePaymentByIdAsyncService(Guid paymentId);
     Task<PaymentDto?> UpdatePaymentByIdAsyncService(Guid paymentId, UpdatePaymentDto updatePayment);
@@ -54,12 +54,25 @@ public class PaymentService : IPayment
 
     }
 
-    public async Task<List<PaymentDto>> GetPaymentsAsyncService()
+    public async Task<List<PaymentDto>> GetPaymentsAsyncService(int pageNumber, int pageSize, string searchQuery)
     {
         try
         {
             var payments = await _appDbContext.Payments.Include(p => p.Customer).ToListAsync();
-            var paymentData = _mapper.Map<List<PaymentDto>>(payments);
+            // using query to search for all the customers whos matching the name otherwise return null
+            var filterPayments = payments.AsQueryable();
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                filterPayments = filterPayments.Where(a => a.CardNumber.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+                if (filterPayments.Count() == 0)
+                {
+                    var exisitingPayment = _mapper.Map<List<PaymentDto>>(filterPayments);
+                    return exisitingPayment;
+                }
+            }
+            // return the pagination result
+            var paginationResult = filterPayments.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            var paymentData = _mapper.Map<List<PaymentDto>>(paginationResult);
             return paymentData;
         }
         catch (DbUpdateException dbEx)
