@@ -23,4 +23,8 @@ public class CreateAddressDto
     [StringLength(55, ErrorMessage = "State must be between 3 and 55 characters.", MinimumLength = 3)]
     public string State { get; set; } = string.Empty;
 
+    [Required]
+    public Guid CustomerId { get; set; } //FK
+
+
 }

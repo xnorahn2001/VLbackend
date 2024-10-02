@@ -2,85 +2,91 @@ using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-public interface ICustomer
+public interface IPayment
 {
-    Task<CustomerDto> CreateCustomerAsyncService(CreateCustomerDto newCustomer);
-    Task<List<CustomerDto>> GetCustomersAsyncService();
-    Task<CustomerDto?> GetCustomerByIdAsyncService(Guid customerId);
-    Task<bool> DeleteCustomerByIdAsyncService(Guid customerId);
-    Task<CustomerDto?> UpdateCustomerByIdAsyncService(Guid customerId, UpdateCustomerDto updateCustomer);
+    Task<PaymentDto> CreatePaymentAsyncService(CreatePaymentDto newPayment);
+    Task<List<PaymentDto>> GetPaymentsAsyncService();
+    Task<PaymentDto?> GetPaymentByIdAsyncService(Guid paymentId);
+    Task<bool> DeletePaymentByIdAsyncService(Guid paymentId);
+    Task<PaymentDto?> UpdatePaymentByIdAsyncService(Guid paymentId, UpdatePaymentDto updatePayment);
 }
-public class CustomerService: ICustomer
+
+public class PaymentService : IPayment
 {
     private readonly AppDBContext _appDbContext;
     private readonly IMapper _mapper;
 
-    public CustomerService(AppDBContext appDbContext, IMapper mapper)
+    public PaymentService(AppDBContext appDbContext, IMapper mapper)
     {
         _appDbContext = appDbContext;
         _mapper = mapper;
     }
 
-    public async Task<CustomerDto> CreateCustomerAsyncService(CreateCustomerDto newCustomer)
+    public async Task<PaymentDto> CreatePaymentAsyncService(CreatePaymentDto newPayment)
     {
         try
         {
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(newCustomer.Password);
-            newCustomer.Password = hashedPassword;
-            var customer = _mapper.Map<Customer>(newCustomer);
-            await _appDbContext.Customers.AddAsync(customer);
-            await _appDbContext.SaveChangesAsync();
-            var customerData = _mapper.Map<CustomerDto>(customer);
-            return customerData;
-        }
-        catch (DbUpdateException dbEx)
-        {
-            // Handle database update exceptions
-            Console.WriteLine($"Database Update Error: {dbEx.Message}");
-            throw new ApplicationException("An error occurred while saving to the database. Please check the data and try again.");
-        }
-        catch (Exception ex)
-        {
-            // Handle any other unexpected exceptions
-            Console.WriteLine($"An unexpected error occurred: {ex.Message}");
-            throw new ApplicationException("An unexpected error occurred. Please try again later.");
-        }
-
-    }
-
-    public async Task<List<CustomerDto>> GetCustomersAsyncService()
-    {
-        try
-        {
-            var customers = await _appDbContext.Customers.ToListAsync();
-            var customerData = _mapper.Map<List<CustomerDto>>(customers);
-            return customerData;
-        }
-        catch (DbUpdateException dbEx)
-        {
-            // Handle database update exceptions
-            Console.WriteLine($"Database Update Error: {dbEx.Message}");
-            throw new ApplicationException("An error occurred while saving to the database. Please check the data and try again.");
-        }
-        catch (Exception ex)
-        {
-            // Handle any other unexpected exceptions
-            Console.WriteLine($"An unexpected error occurred: {ex.Message}");
-            throw new ApplicationException("An unexpected error occurred. Please try again later.");
-        }
-
-    }
-    public async Task<CustomerDto?> GetCustomerByIdAsyncService(Guid customerId)
-    {
-        try
-        {
-            var customer = await _appDbContext.Customers.FindAsync(customerId);
+            var payment = _mapper.Map<Payment>(newPayment);
+            var customer = await _appDbContext.Customers.FirstOrDefaultAsync(c => c.CustomerId == newPayment.CustomerId);
             if (customer == null)
+            {
+                throw new Exception("this customer does not exisit");
+            }
+            payment.Customer = customer;
+            var paymentAdded = await _appDbContext.Payments.AddAsync(payment);
+            await _appDbContext.Payments.AddAsync(payment);
+            await _appDbContext.SaveChangesAsync();
+            var paymentData = _mapper.Map<PaymentDto>(payment);
+            return paymentData;
+        }
+        catch (DbUpdateException dbEx)
+        {
+            // Handle database update exceptions
+            Console.WriteLine($"Database Update Error: {dbEx.Message}");
+            throw new ApplicationException("An error occurred while saving to the database. Please check the data and try again.");
+        }
+        catch (Exception ex)
+        {
+            // Handle any other unexpected exceptions
+            Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+            throw new ApplicationException("An unexpected error occurred. Please try again later.");
+        }
+
+    }
+
+    public async Task<List<PaymentDto>> GetPaymentsAsyncService()
+    {
+        try
+        {
+            var payments = await _appDbContext.Payments.Include(p => p.Customer).ToListAsync();
+            var paymentData = _mapper.Map<List<PaymentDto>>(payments);
+            return paymentData;
+        }
+        catch (DbUpdateException dbEx)
+        {
+            // Handle database update exceptions
+            Console.WriteLine($"Database Update Error: {dbEx.Message}");
+            throw new ApplicationException("An error occurred while saving to the database. Please check the data and try again.");
+        }
+        catch (Exception ex)
+        {
+            // Handle any other unexpected exceptions
+            Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+            throw new ApplicationException("An unexpected error occurred. Please try again later.");
+        }
+
+    }
+    public async Task<PaymentDto?> GetPaymentByIdAsyncService(Guid paymentId)
+    {
+        try
+        {
+            var payment = await _appDbContext.Payments.FindAsync(paymentId);
+            if (payment == null)
             {
                 return null;
             }
-            var customerData = _mapper.Map<CustomerDto>(customer);
-            return customerData;
+            var paymentData = _mapper.Map<PaymentDto>(payment);
+            return paymentData;
         }
         catch (DbUpdateException dbEx)
         {
@@ -96,16 +102,16 @@ public class CustomerService: ICustomer
         }
     }
 
-    public async Task<bool> DeleteCustomerByIdAsyncService(Guid customerId)
+    public async Task<bool> DeletePaymentByIdAsyncService(Guid paymentId)
     {
         try
         {
-            var customer = await _appDbContext.Customers.FindAsync(customerId);
-            if (customer == null)
+            var payment = await _appDbContext.Payments.FindAsync(paymentId);
+            if (payment == null)
             {
                 return false;
             }
-            _appDbContext.Customers.Remove(customer);
+            _appDbContext.Payments.Remove(payment);
             await _appDbContext.SaveChangesAsync();
             return true;
         }
@@ -123,30 +129,25 @@ public class CustomerService: ICustomer
         }
     }
 
-    public async Task<CustomerDto?> UpdateCustomerByIdAsyncService(Guid customerId, UpdateCustomerDto updateCustomer)
+    public async Task<PaymentDto?> UpdatePaymentByIdAsyncService(Guid paymentId, UpdatePaymentDto updatePayment)
     {
         try
         {
-            var customer = await _appDbContext.Customers.FindAsync(customerId);
-            if (customer == null)
+            var payment = await _appDbContext.Payments.FindAsync(paymentId);
+            if (payment == null)
             {
                 return null;
             }
 
-            customer.FirstName = updateCustomer.FirstName ?? customer.FirstName;
-            customer.LastName = updateCustomer.LastName ?? customer.LastName;
-            customer.Email = updateCustomer.Email ?? customer.Email;
-            if (updateCustomer.Password != null)
-            {
-                customer.Password = BCrypt.Net.BCrypt.HashPassword(updateCustomer.Password);
-            }
-            customer.Phone = updateCustomer.Phone ?? customer.Phone;
+            payment.PaymentMethod = updatePayment.PaymentMethod ?? payment.PaymentMethod;
+            payment.CardNumber = updatePayment.CardNumber ?? payment.CardNumber;
+            payment.TotalPrice = updatePayment.TotalPrice ?? payment.TotalPrice;
 
-            _appDbContext.Update(customer);
+            _appDbContext.Payments.Update(payment);
             await _appDbContext.SaveChangesAsync();
 
-            var customerData = _mapper.Map<CustomerDto>(customer);
-            return customerData;
+            var paymentData = _mapper.Map<PaymentDto>(payment);
+            return paymentData;
         }
         catch (DbUpdateException dbEx)
         {
@@ -160,5 +161,6 @@ public class CustomerService: ICustomer
             Console.WriteLine($"An unexpected error occurred: {ex.Message}");
             throw new ApplicationException("An unexpected error occurred. Please try again later.");
         }
+
     }
 }

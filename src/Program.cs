@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,10 +7,17 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 
 builder.Services.AddControllers();
+
 builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<AddressService>();
+builder.Services.AddScoped<PaymentService>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(builder.Configuration.GetConnectionString("Local"));
+dataSourceBuilder.MapEnum<PaymentMethod>();
+
 builder.Services.AddDbContext<AppDBContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 

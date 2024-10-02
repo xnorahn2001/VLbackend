@@ -1,7 +1,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-[ApiController, Route("/api/addresses")]
+[ApiController, Route("/api/v1/addresses")]
 public class AddressController : ControllerBase
 {
     private readonly AddressService _addressService;
@@ -11,7 +11,7 @@ public class AddressController : ControllerBase
         _addressService = addressService;
     }
 
-    // Post: "/api/adresses" => create new address
+    // Post: "/api/v1/adresses" => create new address
     [HttpPost]
     public async Task<IActionResult> CreateAdressAsync([FromBody] CreateAddressDto newAddress)
     {
@@ -39,13 +39,13 @@ public class AddressController : ControllerBase
         }
     }
 
-    // Get: "/api/addresses" => get all the addresses 
+    // Get: "/api/v1/addresses" => get all the addresses 
     [HttpGet]
     public async Task<IActionResult> GetAddressAsync()
     {
         try
         {
-            var addresses = await _addressService.GetAddressAsyncService();
+            var addresses = await _addressService.GetAddressesAsyncService();
             if (addresses.Count() == 0)
             {
                 return ApiResponses.NotFound("The list of address is empty");
@@ -62,9 +62,9 @@ public class AddressController : ControllerBase
         }
     }
 
-    // Get: "api/addresses/{addressId}" => get specific address by Id
+    // Get: "api/v1/addresses/{addressId}" => get specific address by Id
     [HttpGet("{addressId}")]
-    public async Task<IActionResult> GetAddressByNameAsync(Guid addressId)
+    public async Task<IActionResult> GetAddressByIdAsync(Guid addressId)
     {
         try
         {
@@ -86,7 +86,7 @@ public class AddressController : ControllerBase
 
 
     }
-    // Delet: "api/address/{addressId}" => delete address by Id 
+    // Delet: "api/v1/address/{addressId}" => delete address by Id 
     [HttpDelete("{addressId}")]
     public async Task<IActionResult> DeleteAddressByIdAsync(Guid addressId)
     {
@@ -109,7 +109,7 @@ public class AddressController : ControllerBase
         }
     }
 
-    // Put: "api/address/{addressId}" => update address by Id
+    // Put: "api/v1/address/{addressId}" => update address by Id
     [HttpPut("{addressId}")]
     public async Task<IActionResult> UpdataAddressByNameAsync(Guid addressId, [FromBody] UpdateAddressDto updateAddress)
     {
@@ -137,8 +137,6 @@ public class AddressController : ControllerBase
         {
             return ApiResponses.ServerError("Server error: " + ex.Message);
         }
-
-
     }
 
 }

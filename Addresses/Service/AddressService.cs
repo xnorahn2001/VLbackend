@@ -2,7 +2,15 @@ using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-public class AddressService
+public interface IAddress
+{
+    Task<AddressDto> CreateAddressAsyncService(CreateAddressDto newAddress);
+    Task<List<AddressDto>> GetAddressesAsyncService();
+    Task<AddressDto?> GetAddressByIdAsyncService(Guid addressId);
+    Task<bool> DeleteAddressByIdAsyncService(Guid addressId);
+    Task<AddressDto?> UpdateAddressByIdAsyncService(Guid addressId, UpdateAddressDto updateAddress);
+}
+public class AddressService : IAddress
 {
     private readonly AppDBContext _appDbContext;
     private readonly IMapper _mapper;
@@ -18,7 +26,12 @@ public class AddressService
         try
         {
             var address = _mapper.Map<Address>(newAddress);
-            await _appDbContext.Addresses.AddAsync(address);
+            var customer = await _appDbContext.Customers.FirstOrDefaultAsync(c => c.CustomerId == newAddress.CustomerId);
+            if (customer == null){
+                throw new Exception("this customer does not exisit");
+            }
+            address.Customer = customer;
+            var addressAdded = await _appDbContext.Addresses.AddAsync(address);
             await _appDbContext.SaveChangesAsync();
             var addressData = _mapper.Map<AddressDto>(address);
             return addressData;
@@ -38,11 +51,11 @@ public class AddressService
 
     }
 
-    public async Task<List<AddressDto>> GetAddressAsyncService()
+    public async Task<List<AddressDto>> GetAddressesAsyncService()
     {
         try
         {
-            var addresses = await _appDbContext.Addresses.ToListAsync();
+            var addresses = await _appDbContext.Addresses.Include(a => a.Customer).ToListAsync();
             var addressData = _mapper.Map<List<AddressDto>>(addresses);
             return addressData;
         }
@@ -129,7 +142,7 @@ public class AddressService
             address.City = updateAddress.City ?? address.City;
             address.State = updateAddress.State ?? address.State;
 
-            _appDbContext.Update(address);
+            _appDbContext.Addresses.Update(address);
             await _appDbContext.SaveChangesAsync();
 
             var addressData = _mapper.Map<AddressDto>(address);
