@@ -5,9 +5,9 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         // mapping for customers
-        CreateMap<Customer, CustomerDto>();
-        CreateMap<UpdateCustomerDto, CustomerDto>();
-        CreateMap<CreateCustomerDto, Customer>();
+        CreateMap<User, UserDto>();
+        CreateMap<UpdateUserDto, UserDto>();
+        CreateMap<CreateUserDto, User>();
 
         // mapping for address
         CreateMap<Address, AddressDto>();

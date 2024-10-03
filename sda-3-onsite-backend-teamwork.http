@@ -1,22 +1,26 @@
-GET http://localhost:5125/api/v1/customers?pageNumber=1&pageSize=1&searchQuery=Ghadah&sortBy=lastname&sortOrder=desc
+###
+GET http://localhost:5125/api/v1/users
+###
+GET http://localhost:5125/api/v1/users?pageNumber=1&pageSize=4&sortBy=lastname&sortOrder=desc
 
 ###
 
-POST http://localhost:5125/api/v1/customers 
+POST http://localhost:5125/api/v1/users 
 Content-Type: application/json
 
 {
-  "FirstName": "Safaa",
-  "LastName": "Alo",
-  "Email": "Safaa@example.com",
-  "Password": "securePassword1422",
-  "Phone": "1234567000"
+  "FirstName": "Norah",
+  "LastName": "Alp",
+  "Email": "Norah@example.com",
+  "Password": "securePassword1444",
+  "Phone": "1234567333",
+  "IsAdmin": false
 }
 
 ###
-Get http://localhost:5125/api/v1/customers/2ac866ba-534e-4319-ac15-eaa46cf42d7d
+Get http://localhost:5125/api/v1/users/459d7de7-2d6d-4eba-95eb-34104f12ba88
 ###
-Put http://localhost:5125/api/v1/customers/2ac866ba-534e-4319-ac15-eaa46cf42d7d
+Put http://localhost:5125/api/v1/users/459d7de7-2d6d-4eba-95eb-34104f12ba88
 Content-Type: application/json
 
 {
@@ -25,8 +29,10 @@ Content-Type: application/json
 }
 
 ###
-Delete http://localhost:5125/api/v1/customers/f3fba3fa-2422-4959-a9f3-b5e00260deb2
+Delete http://localhost:5125/api/v1/users/459d7de7-2d6d-4eba-95eb-34104f12ba88
 
+###
+Get http://localhost:5125/api/v1/addresses
 ###
 Get http://localhost:5125/api/v1/addresses?pageNumber=1&pageSize=6&sortBy=state&sortOrder=desc
 ###
@@ -34,12 +40,12 @@ POST http://localhost:5125/api/v1/addresses
 Content-Type: application/json
 
 {
-  "AddressName": "Ida Aalbergin222",
+  "AddressName": "Alazizyah",
   "StreetNumber": "1234",
-  "StreetName": "Maple Avenue",
-  "City": "Springfield",
-  "State": "Illinois",
-  "CustomerId": "2ac866ba-534e-4319-ac15-eaa46cf42d7d"
+  "StreetName": "Alwaleed",
+  "City": "Madinah",
+  "State": "Saudi",
+  "UserId": "bd0dd1fe-d8ab-4826-99dd-10459d6cf66b"
 }
 
 ###
@@ -70,7 +76,7 @@ Content-Type: application/json
     "paymentMethod": "Cash",  
     "cardNumber": "111111111111111199911",  
     "totalPrice":  222,
-    "CustomerId": "2ac866ba-534e-4319-ac15-eaa46cf42d7d"
+    "UserId": "2ac866ba-534e-4319-ac15-eaa46cf42d7d"
   
 }
 

@@ -8,7 +8,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<CustomerService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<AddressService>();
 builder.Services.AddScoped<PaymentService>();
 

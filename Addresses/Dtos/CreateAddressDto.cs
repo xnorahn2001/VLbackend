@@ -1,4 +1,4 @@
-// Adress Dto to create new Adress for the customer
+// Adress Dto to create new Adress for the user
 using System.ComponentModel.DataAnnotations;
 
 public class CreateAddressDto
@@ -24,7 +24,7 @@ public class CreateAddressDto
     public string State { get; set; } = string.Empty;
 
     [Required]
-    public Guid CustomerId { get; set; } //FK
+    public Guid UserId { get; set; } //FK
 
 
 }

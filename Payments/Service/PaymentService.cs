@@ -27,12 +27,13 @@ public class PaymentService : IPayment
         try
         {
             var payment = _mapper.Map<Payment>(newPayment);
-            var customer = await _appDbContext.Customers.FirstOrDefaultAsync(c => c.CustomerId == newPayment.CustomerId);
-            if (customer == null)
+            var user = await _appDbContext.Users.FirstOrDefaultAsync(c => c.UserId == newPayment.UserId);
+            if (user == null)
             {
-                throw new Exception("this customer does not exisit");
+                throw new Exception("This user does not exisit");
             }
-            payment.Customer = customer;
+            //payment.TotalPrice = _appDbContext.Products.Sum(p => p.Price);
+            payment.User = user;
             var paymentAdded = await _appDbContext.Payments.AddAsync(payment);
             await _appDbContext.Payments.AddAsync(payment);
             await _appDbContext.SaveChangesAsync();
@@ -58,8 +59,8 @@ public class PaymentService : IPayment
     {
         try
         {
-            var payments = await _appDbContext.Payments.Include(p => p.Customer).ToListAsync();
-            // using query to search for all the customers whos matching the name otherwise return null
+            var payments = await _appDbContext.Payments.Include(p => p.User).ToListAsync();
+            // using query to search for all the users whos matching the name otherwise return null
             var filterPayments = payments.AsQueryable();
             if (!string.IsNullOrEmpty(searchQuery))
             {
@@ -154,7 +155,7 @@ public class PaymentService : IPayment
 
             payment.PaymentMethod = updatePayment.PaymentMethod ?? payment.PaymentMethod;
             payment.CardNumber = updatePayment.CardNumber ?? payment.CardNumber;
-            payment.TotalPrice = updatePayment.TotalPrice ?? payment.TotalPrice;
+            //payment.TotalPrice = updatePayment.TotalPrice ?? payment.TotalPrice;
 
             _appDbContext.Payments.Update(payment);
             await _appDbContext.SaveChangesAsync();

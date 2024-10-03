@@ -2,36 +2,36 @@ using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-public interface ICustomer
+public interface IUserService
 {
-    Task<CustomerDto> CreateCustomerAsyncService(CreateCustomerDto newCustomer);
-    Task<List<CustomerDto>> GetCustomersAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder);
-    Task<CustomerDto?> GetCustomerByIdAsyncService(Guid customerId);
-    Task<bool> DeleteCustomerByIdAsyncService(Guid customerId);
-    Task<CustomerDto?> UpdateCustomerByIdAsyncService(Guid customerId, UpdateCustomerDto updateCustomer);
+    Task<UserDto> CreateUserAsyncService(CreateUserDto newUser);
+    Task<List<UserDto>> GetUsersAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder);
+    Task<UserDto?> GetUserByIdAsyncService(Guid userId);
+    Task<bool> DeleteUserByIdAsyncService(Guid userId);
+    Task<UserDto?> UpdateUserByIdAsyncService(Guid userId, UpdateUserDto updateUser);
 }
-public class CustomerService : ICustomer
+public class UserService : IUserService
 {
     private readonly AppDBContext _appDbContext;
     private readonly IMapper _mapper;
 
-    public CustomerService(AppDBContext appDbContext, IMapper mapper)
+    public UserService(AppDBContext appDbContext, IMapper mapper)
     {
         _appDbContext = appDbContext;
         _mapper = mapper;
     }
 
-    public async Task<CustomerDto> CreateCustomerAsyncService(CreateCustomerDto newCustomer)
+    public async Task<UserDto> CreateUserAsyncService(CreateUserDto newUser)
     {
         try
         {
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(newCustomer.Password);
-            newCustomer.Password = hashedPassword;
-            var customer = _mapper.Map<Customer>(newCustomer);
-            await _appDbContext.Customers.AddAsync(customer);
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
+            newUser.Password = hashedPassword;
+            var user = _mapper.Map<User>(newUser);
+            await _appDbContext.Users.AddAsync(user);
             await _appDbContext.SaveChangesAsync();
-            var customerData = _mapper.Map<CustomerDto>(customer);
-            return customerData;
+            var userData = _mapper.Map<UserDto>(user);
+            return userData;
         }
         catch (DbUpdateException dbEx)
         {
@@ -48,34 +48,33 @@ public class CustomerService : ICustomer
 
     }
 
-    public async Task<List<CustomerDto>> GetCustomersAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder)
+    public async Task<List<UserDto>> GetUsersAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder)
     {
         try
         {
-            var customers = await _appDbContext.Customers.ToListAsync();
-
-            // using query to search for all the customers whos matching the name otherwise return null
-            var filterCustomers = customers.AsQueryable();
+            var users = await _appDbContext.Users.ToListAsync();
+            // using query to search for all the users whos matching the name otherwise return null
+            var filterUsers = users.AsQueryable();
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                filterCustomers = filterCustomers.Where(c => c.FirstName.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
-                if (filterCustomers.Count() == 0)
+                filterUsers = filterUsers.Where(c => c.FirstName.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+                if (filterUsers.Count() == 0)
                 {
-                    var exisitingCustomer = _mapper.Map<List<CustomerDto>>(filterCustomers);
-                    return exisitingCustomer;
+                    var exisitingUser = _mapper.Map<List<UserDto>>(filterUsers);
+                    return exisitingUser;
                 }
             }
-            // sort the list of customers dependes on first or last name as desc or asc othwewise shows the default
-            filterCustomers = sortBy?.ToLower() switch
+            // sort the list of users dependes on first or last name as desc or asc othwewise shows the default
+            filterUsers = sortBy?.ToLower() switch
             {
-                "firstname" => sortOrder == "desc" ? filterCustomers.OrderByDescending(c => c.FirstName) : filterCustomers.OrderBy(c => c.FirstName),
-                "lastname" => sortOrder == "desc" ? filterCustomers.OrderByDescending(c => c.LastName) : filterCustomers.OrderBy(c => c.LastName),
-                _ => filterCustomers.OrderBy(c => c.FirstName) // default 
+                "firstname" => sortOrder == "desc" ? filterUsers.OrderByDescending(c => c.FirstName) : filterUsers.OrderBy(c => c.FirstName),
+                "lastname" => sortOrder == "desc" ? filterUsers.OrderByDescending(c => c.LastName) : filterUsers.OrderBy(c => c.LastName),
+                _ => filterUsers.OrderBy(c => c.FirstName) // default 
             };
             // return the result in pagination 
-            var paginationResult = filterCustomers.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-            var customerData = _mapper.Map<List<CustomerDto>>(paginationResult);
-            return customerData;
+            var paginationResult = filterUsers.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            var userData = _mapper.Map<List<UserDto>>(paginationResult);
+            return userData;
         }
         catch (DbUpdateException dbEx)
         {
@@ -91,17 +90,17 @@ public class CustomerService : ICustomer
         }
 
     }
-    public async Task<CustomerDto?> GetCustomerByIdAsyncService(Guid customerId)
+    public async Task<UserDto?> GetUserByIdAsyncService(Guid userId)
     {
         try
         {
-            var customer = await _appDbContext.Customers.FindAsync(customerId);
-            if (customer == null)
+            var user = await _appDbContext.Users.FindAsync(userId);
+            if (user == null)
             {
                 return null;
             }
-            var customerData = _mapper.Map<CustomerDto>(customer);
-            return customerData;
+            var userData = _mapper.Map<UserDto>(user);
+            return userData;
         }
         catch (DbUpdateException dbEx)
         {
@@ -117,16 +116,16 @@ public class CustomerService : ICustomer
         }
     }
 
-    public async Task<bool> DeleteCustomerByIdAsyncService(Guid customerId)
+    public async Task<bool> DeleteUserByIdAsyncService(Guid userId)
     {
         try
         {
-            var customer = await _appDbContext.Customers.FindAsync(customerId);
-            if (customer == null)
+            var user = await _appDbContext.Users.FindAsync(userId);
+            if (user == null)
             {
                 return false;
             }
-            _appDbContext.Customers.Remove(customer);
+            _appDbContext.Users.Remove(user);
             await _appDbContext.SaveChangesAsync();
             return true;
         }
@@ -144,30 +143,30 @@ public class CustomerService : ICustomer
         }
     }
 
-    public async Task<CustomerDto?> UpdateCustomerByIdAsyncService(Guid customerId, UpdateCustomerDto updateCustomer)
+    public async Task<UserDto?> UpdateUserByIdAsyncService(Guid userId, UpdateUserDto updateUser)
     {
         try
         {
-            var customer = await _appDbContext.Customers.FindAsync(customerId);
-            if (customer == null)
+            var user = await _appDbContext.Users.FindAsync(userId);
+            if (user == null)
             {
                 return null;
             }
 
-            customer.FirstName = updateCustomer.FirstName ?? customer.FirstName;
-            customer.LastName = updateCustomer.LastName ?? customer.LastName;
-            customer.Email = updateCustomer.Email ?? customer.Email;
-            if (updateCustomer.Password != null)
+            user.FirstName = updateUser.FirstName ?? user.FirstName;
+            user.LastName = updateUser.LastName ?? user.LastName;
+            user.Email = updateUser.Email ?? user.Email;
+            if (updateUser.Password != null)
             {
-                customer.Password = BCrypt.Net.BCrypt.HashPassword(updateCustomer.Password);
+                user.Password = BCrypt.Net.BCrypt.HashPassword(updateUser.Password);
             }
-            customer.Phone = updateCustomer.Phone ?? customer.Phone;
+            user.Phone = updateUser.Phone ?? user.Phone;
 
-            _appDbContext.Update(customer);
+            _appDbContext.Update(user);
             await _appDbContext.SaveChangesAsync();
 
-            var customerData = _mapper.Map<CustomerDto>(customer);
-            return customerData;
+            var userData = _mapper.Map<UserDto>(user);
+            return userData;
         }
         catch (DbUpdateException dbEx)
         {

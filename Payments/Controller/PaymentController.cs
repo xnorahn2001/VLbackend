@@ -117,7 +117,7 @@ public class PaymentController : ControllerBase
             var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
             Console.WriteLine("Validation errors:");
             errors.ForEach(error => Console.WriteLine(error));
-            return ApiResponses.BadRequest("Invalid Customer Data");
+            return ApiResponses.BadRequest("Invalid User Data");
         }
         try
         {

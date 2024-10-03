@@ -8,8 +8,8 @@ public class AddressDto
     public string City { get; set; }
     public string State { get; set; }
 
-    // one customer has many addresses
-    public Guid CustomerId { get; set; }
-    public CustomerDto Customer { get; set; }
+    // one user has many addresses
+    public Guid UserId { get; set; }
+    public UserDto User { get; set; }
 
 }

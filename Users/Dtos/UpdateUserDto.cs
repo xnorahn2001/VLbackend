@@ -1,8 +1,8 @@
-// Customer Dto to update existing customer
+// User Dto to update existing user
 
 using System.ComponentModel.DataAnnotations;
 
-public class UpdateCustomerDto
+public class UpdateUserDto
 {
     [StringLength(55, ErrorMessage = "FirstName must be between 3 and 55 characters.", MinimumLength = 3)]
     public string? FirstName { get; set; }
@@ -18,4 +18,5 @@ public class UpdateCustomerDto
 
     [StringLength(10, ErrorMessage = "Phone number must be exactly 10 characters.")]
     public string? Phone { get; set; }
+    public bool? IsAdmin { get; set; }
 }

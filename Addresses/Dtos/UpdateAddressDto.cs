@@ -1,4 +1,4 @@
-// Adress Dto to update an existing Adress for the customer
+// Adress Dto to update an existing Adress for the user
 using System.ComponentModel.DataAnnotations;
 
 public class UpdateAddressDto

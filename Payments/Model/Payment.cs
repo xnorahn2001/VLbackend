@@ -9,9 +9,9 @@ public class Payment
     public string CardNumber { get; set; } = string.Empty;
     public decimal TotalPrice { get; set; } = 0;
 
-    // one customer has many payments
-    public Guid CustomerId { get; set; } //FK
+    // one user has many payments
+    public Guid UserId { get; set; } //FK
 
-    public Customer Customer { get; set; }
+    public User User { get; set; }
 
 }

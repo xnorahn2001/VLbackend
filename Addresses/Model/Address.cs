@@ -11,9 +11,9 @@ public class Address
     public string City { get; set; } = string.Empty;
     public string State { get; set; } = string.Empty;
 
-    // one customer has many addresses
-    public Guid CustomerId { get; set; } //FK
+    // one user has many addresses
+    public Guid UserId { get; set; } //FK
 
-    public Customer Customer { get; set; }
+    public User User { get; set; }
 
 }

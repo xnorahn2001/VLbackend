@@ -26,12 +26,12 @@ public class AddressService : IAddress
         try
         {
             var address = _mapper.Map<Address>(newAddress);
-            var customer = await _appDbContext.Customers.FirstOrDefaultAsync(c => c.CustomerId == newAddress.CustomerId);
-            if (customer == null)
+            var user = await _appDbContext.Users.FirstOrDefaultAsync(c => c.UserId == newAddress.UserId);
+            if (user == null)
             {
-                throw new Exception("this customer does not exisit");
+                throw new Exception("this user does not exisit");
             }
-            address.Customer = customer;
+            address.User = user;
             var addressAdded = await _appDbContext.Addresses.AddAsync(address);
             await _appDbContext.SaveChangesAsync();
             var addressData = _mapper.Map<AddressDto>(address);
@@ -56,8 +56,8 @@ public class AddressService : IAddress
     {
         try
         {
-            var addresses = await _appDbContext.Addresses.Include(a => a.Customer).ToListAsync();
-            // using query to search for all the customers whos matching the name otherwise return null
+            var addresses = await _appDbContext.Addresses.Include(a => a.User).ToListAsync();
+            // using query to search for all the users whos matching the name otherwise return null
             var filterAddresses = addresses.AsQueryable();
             if (!string.IsNullOrEmpty(searchQuery))
             {

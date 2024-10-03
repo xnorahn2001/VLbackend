@@ -1,6 +1,6 @@
-// Customer Dto to create new customer
+// User Dto to create new user
 using System.ComponentModel.DataAnnotations;
-public class CreateCustomerDto
+public class CreateUserDto
 {
 
     [Required(ErrorMessage = "FirstName is missing.")]
@@ -22,4 +22,7 @@ public class CreateCustomerDto
     [Required(ErrorMessage = "Phone is required.")]
     [StringLength(10, ErrorMessage = "Phone number must be exactly 10 characters.")]
     public string Phone { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "IsAdmin required.")]
+    public bool IsAdmin { get; set; } = false;
 }

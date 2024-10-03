@@ -6,7 +6,7 @@ public class PaymentDto
     public required string CardNumber { get; set; }
     public decimal TotalPrice { get; set; }
 
-    // one customer has many payments
-    public Guid CustomerId { get; set; }
-    public CustomerDto Customer { get; set; }
+    // one user has many payments
+    public Guid UserId { get; set; }
+    public UserDto User { get; set; }
 }
