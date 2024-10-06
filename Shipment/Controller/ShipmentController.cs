@@ -68,7 +68,7 @@ public class ShipmentController : ControllerBase
     }
 
     // Get: "api/v1/shipments/{shipmentId}" => get specific shipment by id
-    [Authorize (Roles = "Admin")]
+    [Authorize]
     [HttpGet("{shipmentId}")]
     public async Task<IActionResult> GetShipmentByIdAsync(Guid shipmentId)
     {

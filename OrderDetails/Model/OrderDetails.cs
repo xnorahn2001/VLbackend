@@ -9,10 +9,12 @@ public class OrderDetails
 
     // one order has one order detailses 
     public Guid OrderId { get; set; }
+    [JsonIgnore]
     public Order Order { get; set; }
 
     // one product has many order detailses 
     public Guid ProductId { get; set; }
+    [JsonIgnore]
     public Product Product { get; set; }
 
 }

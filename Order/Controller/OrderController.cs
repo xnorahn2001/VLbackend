@@ -75,14 +75,17 @@ public class OrderController : ControllerBase
     // POST: api/order
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDetailsDto newOrder)
+    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto newOrder)
     {
         try
         {
-            var authenticatedClaims = HttpContext.User;
-            var userId = authenticatedClaims.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
-            var userIdForOrder = new Guid(userId);
-            var order = await _service.CheckoutOrderAsyncService(newOrder, userIdForOrder);
+            
+          //  var authenticatedClaims = HttpContext.User;
+           // var userId = authenticatedClaims.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
+           // var userIdForOrder = new Guid(userId);
+           // Console.WriteLine($"{userIdForOrder}");
+            
+            var order = await _service.CheckoutOrderAsyncService(newOrder);
             return ApiResponses.Created(order, "Order created successfully");
         }
         catch (ApplicationException ex)

@@ -79,9 +79,11 @@ namespace Backend.Migrations
                 columns: table => new
                 {
                     OrderId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
-                    TotalPrice = table.Column<int>(type: "integer", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "numeric", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    OrderDetailsId = table.Column<Guid>(type: "uuid", nullable: false)
+                    ShipmentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PaymentId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,7 +130,7 @@ namespace Backend.Migrations
                     PaymentId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
                     PaymentMethod = table.Column<int>(type: "integer", nullable: false),
                     CardNumber = table.Column<string>(type: "text", nullable: false),
-                    TotalPrice = table.Column<int>(type: "integer", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "numeric", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     OrderId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -185,8 +187,7 @@ namespace Backend.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_OrderDetailses_OrderId",
                 table: "OrderDetailses",
-                column: "OrderId",
-                unique: true);
+                column: "OrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderDetailses_ProductId",

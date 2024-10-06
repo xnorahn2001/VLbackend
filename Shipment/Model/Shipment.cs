@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 public class Shipment
 {
     public Guid ShipmentId { get; set; }
@@ -8,6 +10,7 @@ public class Shipment
 
     // one order has one shipment
     public Guid OrderId { get; set; }
+    [JsonIgnore]
     public Order Order { get; set; }
 
 }

@@ -9,9 +9,16 @@ using UserAuthenticationWebApi2.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+DotNetEnv.Env.Load();
+
+// Get JWT settings from environment variables
+var jwtKey = Environment.GetEnvironmentVariable("Jwt__KEY") ?? throw new InvalidOperationException("JWT Key is missing in environment variables.");
+System.Console.WriteLine($"JwtKey {jwtKey}");
+var jwtIssuer = Environment.GetEnvironmentVariable("Jwt__ISSUER") ?? throw new InvalidOperationException("JWT Issuer is missing in environment variables.");
+var jwtAudience = Environment.GetEnvironmentVariable("Jwt__AUDIENCE") ?? throw new InvalidOperationException("JWT Audience is missing in environment variables.");
+
 builder.Services.AddAutoMapper(typeof(Program));
 
-builder.Services.AddControllers();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
@@ -24,6 +31,14 @@ builder.Services.AddScoped<IShipmentService, ShipmentService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Services Controller Configuration with JsonIgnore
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        options.JsonSerializerOptions.WriteIndented = true;
+    });
+
 var dataSourceBuilder = new NpgsqlDataSourceBuilder(builder.Configuration.GetConnectionString("Local"));
 dataSourceBuilder.MapEnum<PaymentMethod>();
 dataSourceBuilder.MapEnum<Size>();
@@ -31,13 +46,15 @@ dataSourceBuilder.MapEnum<Color>();
 dataSourceBuilder.MapEnum<Material>();
 dataSourceBuilder.MapEnum<Status>();
 
+
+var defaultConnection = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") ?? throw new InvalidOperationException("Default Connection is missing in environment variables.");
+
+System.Console.WriteLine($"defaultConnection {defaultConnection}");
 builder.Services.AddDbContext<AppDBContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+  options.UseNpgsql(defaultConnection));
 
 
-var Configuration = builder.Configuration;
-
-var key = Encoding.ASCII.GetBytes(Configuration["Jwt:Key"]);
+var key = Encoding.ASCII.GetBytes(jwtKey);
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -53,8 +70,8 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidIssuer = Configuration["Jwt:Issuer"],
-        ValidAudience = Configuration["Jwt:Audience"],
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
         ClockSkew = TimeSpan.Zero
     };
 });
@@ -114,10 +131,20 @@ app.Use(async (context, next) =>
 });
 
 
-app.MapGet("/", () =>
-{
-    return "API is running.";
-});
+// builder.Services.AddCors(options =>
+//     {
+
+//         options.AddPolicy("AllowSpecificOrigins", builder =>
+//         {
+//             builder.WithOrigins("http://localhost:3000",
+//                                 "https://www.yourclientapp.com"
+//                     )
+//                   .AllowAnyMethod()
+//                   .AllowAnyHeader()
+//                   .AllowCredentials();
+//         });
+//     });
+// app.UseCors("MyAllowSpecificOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();

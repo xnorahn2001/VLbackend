@@ -4,5 +4,5 @@ public class CreateOrderDetailsDto
 {
     public int Quantity { get; set; }
     [Required]
-    public List<Guid> ProductList { get; set; } //FK
+    public Guid ProductId { get; set; } //FK
 }

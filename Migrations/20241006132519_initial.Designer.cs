@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20241006081130_initial4")]
-    partial class initial4
+    [Migration("20241006132519_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,11 +81,17 @@ namespace Backend.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_generate_v4()");
 
+                    b.Property<Guid>("PaymentId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TotalPrice")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ShipmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("numeric");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -118,8 +124,7 @@ namespace Backend.Migrations
 
                     b.HasKey("OrdersDetailesId");
 
-                    b.HasIndex("OrderId")
-                        .IsUnique();
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
 
@@ -143,8 +148,8 @@ namespace Backend.Migrations
                     b.Property<int>("PaymentMethod")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TotalPrice")
-                        .HasColumnType("integer");
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("numeric");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -287,8 +292,8 @@ namespace Backend.Migrations
             modelBuilder.Entity("OrderDetails", b =>
                 {
                     b.HasOne("Order", "Order")
-                        .WithOne("OrderDetails")
-                        .HasForeignKey("OrderDetails", "OrderId")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -335,8 +340,7 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Order", b =>
                 {
-                    b.Navigation("OrderDetails")
-                        .IsRequired();
+                    b.Navigation("OrderDetails");
 
                     b.Navigation("Payment")
                         .IsRequired();

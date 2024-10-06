@@ -1,4 +1,6 @@
 // Product Model
+using System.Text.Json.Serialization;
+
 public class Product
 {
     public Guid ProductId { get; set; }
@@ -10,5 +12,6 @@ public class Product
     public int Quantity { get; set; }
 
     // one Product has one orderDetails => one product could be in many orderDetail
+    [JsonIgnore]
     public List<OrderDetails> OrderDetailses { get; set; }
 }

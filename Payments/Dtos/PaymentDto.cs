@@ -3,7 +3,7 @@
 public class PaymentDto
 {
     public PaymentMethod paymentMethod { get; set; } 
-    public int TotalPrice { get; set; }
+    public decimal TotalPrice { get; set; }
 
     // one order has one payment
     public Guid OrderId { get; set; }

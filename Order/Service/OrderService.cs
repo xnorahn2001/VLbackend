@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 public interface IOrderService
 {
     // Task<OrderDto> CreateOrderAsyncService(CreateOrderDto newOrder);
-    Task<OrderDto> CheckoutOrderAsyncService(CreateOrderDetailsDto checkoutItem, Guid userId);
+    Task<OrderDto> CheckoutOrderAsyncService(CreateOrderDto checkoutItem);
     Task<List<OrderDto>> GetOrdersAsyncService(int pageNumber, int pageSize);
     Task<OrderDto?> GetOrderByIdAsyncService(Guid orderId);
     Task<bool> DeleteOrderByIdAsyncService(Guid orderId);
@@ -22,67 +22,39 @@ public class OrderService : IOrderService
         _mapper = mapper;
     }
 
-    // // Create a new order
-    // public async Task<OrderDto> CreateOrderAsyncService(CreateOrderDto newOrder)
-    // {
-    //     try
-    //     {
-    //         var order = _mapper.Map<Order>(newOrder);
-    //         var orderUser = order.User;
-    //         orderUser = _appDbContext.Users.FirstOrDefault(u => u.UserId == newOrder.UserId);
-    //         if (orderUser == null)
-    //         {
-    //             throw new Exception($"There is no user with this Id {newOrder.UserId}");
-    //         }
 
-    //         var orderDetail = order.OrderDetails;
-    //         // orderDetail = _appDbContext.OrderDetailses.FirstOrDefault(o => o.OrdersDetailesId == newOrder.OrderDetailsId);
-    //         if (orderDetail == null)
-    //         {
-    //             throw new Exception($"There is no order detail with this Id {newOrder.OrderDetailsId}");
-    //         }
-
-    //         await _appDbContext.Orders.AddAsync(order);
-    //         await _appDbContext.SaveChangesAsync();
-    //         var orderData = _mapper.Map<OrderDto>(order);
-    //         return orderData;
-    //     }
-    //     catch (DbUpdateException dbEx)
-    //     {
-    //         // Handle database update exceptions
-    //         Console.WriteLine($"Database Update Error: {dbEx.Message}");
-    //         throw new ApplicationException("An error occurred while saving to the database. Please check the data and try again.");
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         // Handle any other unexpected exceptions
-    //         Console.WriteLine($"An unexpected error occurred: {ex.Message}");
-    //         throw new ApplicationException("An unexpected error occurred. Please try again later.");
-    //     }
-    // }
-
-    public async Task<OrderDto> CheckoutOrderAsyncService(CreateOrderDetailsDto checkoutItem, Guid userId)
+    public async Task<OrderDto> CheckoutOrderAsyncService(CreateOrderDto checkoutItem)
     {
         try
         {
             // find user existed or not in db 
-            var userFound = _appDbContext.Users.FirstOrDefault(u => u.UserId == userId);
+            var userFound = _appDbContext.Users.FirstOrDefault(u => u.UserId == checkoutItem.UserId);
             if (userFound == null)
             {
-                throw new Exception($"There is no  user with this id {userId}");
+                throw new Exception($"There is no  user with this id {checkoutItem.UserId}");
             }
             // [12323, 232332,54545,7676]
             var order = new Order();
+            System.Console.WriteLine("create order instance successfully");
+
+            // save this order in database in case error happen 
             order.User = userFound;
+            order.UserId = userFound.UserId;
+            await _appDbContext.Orders.AddAsync(order);
+            await _appDbContext.SaveChangesAsync();
             // run for loop to loop through list of order product id 
-            foreach (var productId in checkoutItem.ProductList)
+            decimal totalPriceOrder = 0;
+            var totalQuantityOrder = 0;
+
+            foreach (var orderdetails in checkoutItem.OrderDetailses)
             {            // find product that user wanna checkout is existed in db 
-                var foundProduct = _appDbContext.Products.FirstOrDefault(p => p.ProductId == productId);
+                System.Console.WriteLine("in for loop - order details");
+                var foundProduct = _appDbContext.Products.FirstOrDefault(p => p.ProductId == orderdetails.ProductId);
                 if (foundProduct == null)
                 {
-                    throw new Exception($"There is no product with this id {productId}.");
+                    throw new Exception($"There is no product with this id {orderdetails.ProductId}.");
                 }
-                if (foundProduct.Quantity < order.Quantity)
+                if (foundProduct.Quantity < orderdetails.Quantity)
                 {
                     throw new Exception("You try to order more than we have.");
                 }
@@ -90,11 +62,48 @@ public class OrderService : IOrderService
                 var orderDetail = new OrderDetails();
                 // orderDetail.ProductId =  productFound 
                 // 
+                System.Console.WriteLine("Create an order details");
+                System.Console.WriteLine($"Order id {order.OrderId}");
+
                 orderDetail.OrderId = order.OrderId;
-                orderDetail.Quantity = order.Quantity;
-                orderDetail.TotalPrice = foundProduct.Price * checkoutItem.Quantity;
+                orderDetail.Quantity = orderdetails.Quantity;
+                orderDetail.ProductId = foundProduct.ProductId;
+                orderDetail.TotalPrice = foundProduct.Price * orderdetails.Quantity;
+                System.Console.WriteLine("Before save item in db");
+                await _appDbContext.OrderDetailses.AddAsync(orderDetail);
+                await _appDbContext.SaveChangesAsync();
+
+                totalPriceOrder += orderDetail.TotalPrice;
+                totalQuantityOrder += orderdetails.Quantity;
             }
-            await _appDbContext.Orders.AddAsync(order);
+            order.TotalPrice = totalPriceOrder;
+            order.Quantity = totalQuantityOrder;
+
+            var payment = new Payment();
+
+            payment.PaymentMethod = checkoutItem.PaymentMethod ?? PaymentMethod.ApplePay;
+            payment.CardNumber = checkoutItem.CardNumber;
+            payment.User = order.User;
+            payment.UserId = order.UserId;
+            payment.Order = order;
+            payment.OrderId = order.OrderId;
+
+            await _appDbContext.Payments.AddAsync(payment);
+            await _appDbContext.SaveChangesAsync();
+
+            var shipment = new Shipment();
+            shipment.ShipmentDate = DateTime.UtcNow;
+            shipment.DeliveryDate = DateTime.UtcNow.AddMonths(3);
+            shipment.OrderId = order.OrderId;
+            shipment.Status = Status.Shipped;
+            Random random = new Random();
+            shipment.TrackingNumber = random.Next(999999, 99999999);
+
+            await _appDbContext.Shipments.AddAsync(shipment);
+            _appDbContext.SaveChanges();
+
+            order.ShipmentId = shipment.ShipmentId;
+            _appDbContext.Orders.Update(order);
             await _appDbContext.SaveChangesAsync();
             var orderData = _mapper.Map<OrderDto>(order);
             return orderData;
@@ -119,7 +128,7 @@ public class OrderService : IOrderService
 
         try
         {
-            var orders = await _appDbContext.Orders.Include(o => o.User).Include(o => o.OrderDetails).ToListAsync();
+            var orders = await _appDbContext.Orders.Include(o => o.User).Include(o => o.OrderDetails).Include(o => o.Payment).Include(o => o.Shipment).ToListAsync();
             // return the pagination result
             var paginationResult = orders.Skip((pageNumber - 1) * pageSize).Take(pageSize);
             var ordersData = _mapper.Map<List<OrderDto>>(paginationResult);

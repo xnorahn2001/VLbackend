@@ -25,13 +25,18 @@ public class MappingProfile : Profile
         CreateMap<CreateProductDto, Product>();
 
         // mapping for Order
-        CreateMap<Order, OrderDto>();
+        // CreateMap<Order, OrderDto>();
         CreateMap<CreateOrderDto, Order>();
 
         // mapping for Order Details
         CreateMap<OrderDetails, OrderDetailsDto>();
         CreateMap<UpdateOrderDetailsDot, OrderDetailsDto>();
         CreateMap<CreateOrderDetailsDto, OrderDetails>();
+
+
+        CreateMap<Order, OrderDto>()
+        .ForMember(dest => dest.Payment , opt => opt.MapFrom(src => src.Payment));
+        // .ForMember(dest => dest.Shipment, opt => opt.MapFrom(src => src.Shipment));
 
     }
 }
