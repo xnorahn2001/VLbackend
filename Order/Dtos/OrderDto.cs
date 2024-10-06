@@ -9,8 +9,7 @@ public class OrderDto
     public UserDto User { get; set; }
 
     // one order has many orderDetails
-    // public Guid OrderDetailsId { get; set; }
-    public List<OrderDetailsDto> OrderDetailses { get; set; }
+    public List<OrderDetails> OrderDetailses { get; set; }
 
     public PaymentDto Payment { get; set; }
 
