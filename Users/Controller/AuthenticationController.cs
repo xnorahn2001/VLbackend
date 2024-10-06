@@ -42,15 +42,15 @@ public class AuthenticationController : ControllerBase
 
     // POST: api/users/login
     [HttpPost("login")]
-    public async Task<IActionResult>Login(UserLoginDto userLogin)
+    public async Task<IActionResult> Login(UserLoginDto userLogin)
     {
         var token = await _usersAuthService.LoginService(userLogin);
-        if (token == null){
+        if (token == null)
+        {
             return ApiResponses.BadRequest("Email/Password incorrect.");
         }
-        Console.WriteLine($"{token}");
-        
-        return ApiResponses.Success("Login successfully");
+
+        return ApiResponses.Success($"Login successfully, Token: {token}");
     }
 
 }
