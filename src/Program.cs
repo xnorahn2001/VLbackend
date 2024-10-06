@@ -11,14 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 DotNetEnv.Env.Load();
 
-var Configuration = builder.Configuration;
-
-// Get JWT settings from environment variables
-var jwtKey = Environment.GetEnvironmentVariable("Jwt__KEY") ?? throw new InvalidOperationException("JWT Key is missing in environment variables.");
-System.Console.WriteLine($"JwtKey {jwtKey}");
-var jwtIssuer = Environment.GetEnvironmentVariable("Jwt__ISSUER") ?? throw new InvalidOperationException("JWT Issuer is missing in environment variables.");
-var jwtAudience = Environment.GetEnvironmentVariable("Jwt__AUDIENCE") ?? throw new InvalidOperationException("JWT Audience is missing in environment variables.");
-
 builder.Services.AddAutoMapper(typeof(Program));
 
 
@@ -41,18 +33,24 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
-var dataSourceBuilder = new NpgsqlDataSourceBuilder(builder.Configuration.GetConnectionString("Local"));
+var Configuration = builder.Configuration;
+
+// Get JWT settings from environment variables
+var jwtKey = Environment.GetEnvironmentVariable("Jwt__KEY") ?? throw new InvalidOperationException("JWT Key is missing in environment variables.");
+System.Console.WriteLine($"JwtKey {jwtKey}");
+var jwtIssuer = Environment.GetEnvironmentVariable("Jwt__ISSUER") ?? throw new InvalidOperationException("JWT Issuer is missing in environment variables.");
+var jwtAudience = Environment.GetEnvironmentVariable("Jwt__AUDIENCE") ?? throw new InvalidOperationException("JWT Audience is missing in environment variables.");
+var defaultConnection = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") ?? throw new InvalidOperationException("Default Connection is missing in environment variables.");
+
+builder.Services.AddDbContext<AppDBContext>(options =>
+  options.UseNpgsql(defaultConnection));
+
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(Configuration.GetConnectionString("Local"));
 dataSourceBuilder.MapEnum<PaymentMethod>();
 dataSourceBuilder.MapEnum<Size>();
 dataSourceBuilder.MapEnum<Color>();
 dataSourceBuilder.MapEnum<Material>();
 dataSourceBuilder.MapEnum<Status>();
-
-
-var defaultConnection = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") ?? throw new InvalidOperationException("Default Connection is missing in environment variables.");
-
-builder.Services.AddDbContext<AppDBContext>(options =>
-  options.UseNpgsql(defaultConnection));
 
 
 var key = Encoding.ASCII.GetBytes(jwtKey);
@@ -133,7 +131,6 @@ app.Use(async (context, next) =>
 
 // builder.Services.AddCors(options =>
 //     {
-
 //         options.AddPolicy("AllowSpecificOrigins", builder =>
 //         {
 //             builder.WithOrigins("http://localhost:3000",

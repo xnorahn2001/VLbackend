@@ -14,7 +14,7 @@ GET http://localhost:5125/api/v1/users?pageNumber=1&pageSize=9&sortBy=lastname&s
 
 ###
 
-POST https://craftyourownapi.onrender.com/api/v1/users/register 
+POST https://craftyourown.onrender.com/api/v1/users/register 
 Content-Type: application/json
 
 {
