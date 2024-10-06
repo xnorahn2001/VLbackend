@@ -40,13 +40,6 @@ public class AppDBContext : DbContext
 
         });
 
-        // modelBuilder.Entity<Address>().Navigation(s => s.User).AutoInclude();
-        // modelBuilder.Entity<Payment>().Navigation(s => s.User).AutoInclude();
-        // // modelBuilder.Entity<Payment>().Navigation(s => s.Order).AutoInclude();
-        // modelBuilder.Entity<Order>().Navigation(s => s.User).AutoInclude();
-        // modelBuilder.Entity<Order>().Navigation(s => s.OrderDetails).AutoInclude();
-        // modelBuilder.Entity<Shipment>().Navigation(s => s.Order).AutoInclude();
-        // modelBuilder.Entity<OrderDetails>().Navigation(s => s.Product).AutoInclude();
 
         // fluent api for Payment
         modelBuilder.Entity<Payment>(payment =>

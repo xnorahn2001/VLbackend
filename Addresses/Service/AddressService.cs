@@ -158,7 +158,6 @@ public class AddressService : IAddressService
             {
                 return null;
             }
-
             address.AddressName = updateAddress.AddressName ?? address.AddressName;
             address.StreetName = updateAddress.StreetName ?? address.StreetName;
             address.StreetNumber = updateAddress.StreetNumber ?? address.StreetNumber;

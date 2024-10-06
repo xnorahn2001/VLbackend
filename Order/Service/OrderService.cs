@@ -27,7 +27,7 @@ public class OrderService : IOrderService
     {
         try
         {
-            // find user existed or not in db 
+
             var userFound = _appDbContext.Users.FirstOrDefault(u => u.UserId == checkoutItem.UserId);
             if (userFound == null)
             {
@@ -35,20 +35,17 @@ public class OrderService : IOrderService
             }
             // [12323, 232332,54545,7676]
             var order = new Order();
-            System.Console.WriteLine("create order instance successfully");
 
-            // save this order in database in case error happen 
             order.User = userFound;
             order.UserId = userFound.UserId;
             await _appDbContext.Orders.AddAsync(order);
             await _appDbContext.SaveChangesAsync();
-            // run for loop to loop through list of order product id 
+
             decimal totalPriceOrder = 0;
             var totalQuantityOrder = 0;
 
             foreach (var orderdetails in checkoutItem.OrderDetailses)
-            {            // find product that user wanna checkout is existed in db 
-                System.Console.WriteLine("in for loop - order details");
+            {
                 var foundProduct = _appDbContext.Products.FirstOrDefault(p => p.ProductId == orderdetails.ProductId);
                 if (foundProduct == null)
                 {
@@ -58,20 +55,18 @@ public class OrderService : IOrderService
                 {
                     throw new Exception("You try to order more than we have.");
                 }
-                // if product is existed in db, check quantity in db 
+
                 var orderDetail = new OrderDetails();
-                // orderDetail.ProductId =  productFound 
-                // 
-                System.Console.WriteLine("Create an order details");
-                System.Console.WriteLine($"Order id {order.OrderId}");
 
                 orderDetail.OrderId = order.OrderId;
                 orderDetail.Quantity = orderdetails.Quantity;
                 orderDetail.ProductId = foundProduct.ProductId;
                 orderDetail.TotalPrice = foundProduct.Price * orderdetails.Quantity;
-                System.Console.WriteLine("Before save item in db");
+
                 await _appDbContext.OrderDetailses.AddAsync(orderDetail);
                 await _appDbContext.SaveChangesAsync();
+
+                order.OrderDetails.Add(orderDetail);
 
                 totalPriceOrder += orderDetail.TotalPrice;
                 totalQuantityOrder += orderdetails.Quantity;
@@ -87,6 +82,7 @@ public class OrderService : IOrderService
             payment.UserId = order.UserId;
             payment.Order = order;
             payment.OrderId = order.OrderId;
+            payment.TotalPrice = order.TotalPrice;
 
             await _appDbContext.Payments.AddAsync(payment);
             await _appDbContext.SaveChangesAsync();
