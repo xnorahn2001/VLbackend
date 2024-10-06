@@ -130,7 +130,6 @@ app.Use(async (context, next) =>
     Console.WriteLine($"Time Taken: {stopwatch.ElapsedMilliseconds}");
 });
 
-
 // builder.Services.AddCors(options =>
 //     {
 
