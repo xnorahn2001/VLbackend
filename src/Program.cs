@@ -11,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 DotNetEnv.Env.Load();
 
+var Configuration = builder.Configuration;
+
 // Get JWT settings from environment variables
 var jwtKey = Environment.GetEnvironmentVariable("Jwt__KEY") ?? throw new InvalidOperationException("JWT Key is missing in environment variables.");
 System.Console.WriteLine($"JwtKey {jwtKey}");
@@ -49,7 +51,6 @@ dataSourceBuilder.MapEnum<Status>();
 
 var defaultConnection = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") ?? throw new InvalidOperationException("Default Connection is missing in environment variables.");
 
-System.Console.WriteLine($"defaultConnection {defaultConnection}");
 builder.Services.AddDbContext<AppDBContext>(options =>
   options.UseNpgsql(defaultConnection));
 
