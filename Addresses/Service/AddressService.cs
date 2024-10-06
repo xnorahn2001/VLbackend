@@ -103,6 +103,8 @@ public class AddressService : IAddressService
             {
                 return null;
             }
+            var user = await _appDbContext.Users.FindAsync(address.UserId);
+            address.User = user;
             var addressData = _mapper.Map<AddressDto>(address);
             return addressData;
         }
