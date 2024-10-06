@@ -12,4 +12,7 @@ public class CreatePaymentDto
 
     [Required]
     public Guid UserId { get; set; } //FK
+    
+    [Required]
+    public Guid OrderId { get; set; } //FK
 }

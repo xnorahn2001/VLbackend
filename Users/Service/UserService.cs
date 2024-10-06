@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 public interface IUserService
 {
-    Task<UserDto> CreateUserAsyncService(CreateUserDto newUser);
     Task<List<UserDto>> GetUsersAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder);
     Task<UserDto?> GetUserByIdAsyncService(Guid userId);
     Task<bool> DeleteUserByIdAsyncService(Guid userId);
@@ -20,34 +19,6 @@ public class UserService : IUserService
         _appDbContext = appDbContext;
         _mapper = mapper;
     }
-
-    public async Task<UserDto> CreateUserAsyncService(CreateUserDto newUser)
-    {
-        try
-        {
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
-            newUser.Password = hashedPassword;
-            var user = _mapper.Map<User>(newUser);
-            await _appDbContext.Users.AddAsync(user);
-            await _appDbContext.SaveChangesAsync();
-            var userData = _mapper.Map<UserDto>(user);
-            return userData;
-        }
-        catch (DbUpdateException dbEx)
-        {
-            // Handle database update exceptions
-            Console.WriteLine($"Database Update Error: {dbEx.Message}");
-            throw new ApplicationException("An error occurred while saving to the database. Please check the data and try again.");
-        }
-        catch (Exception ex)
-        {
-            // Handle any other unexpected exceptions
-            Console.WriteLine($"An unexpected error occurred: {ex.Message}");
-            throw new ApplicationException("An unexpected error occurred. Please try again later.");
-        }
-
-    }
-
     public async Task<List<UserDto>> GetUsersAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder)
     {
         try

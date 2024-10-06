@@ -10,7 +10,7 @@ public class Address
     public string StreetName { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
     public string State { get; set; } = string.Empty;
-
+    
     // one user has many addresses
     public Guid UserId { get; set; } //FK
 

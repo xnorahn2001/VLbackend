@@ -1,26 +1,35 @@
 ###
 GET http://localhost:5125/api/v1/users
+Bearer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiQWRtaW4iLCJuYmYiOjE3MjgxOTc0ODIsImV4cCI6MTcyODIwNDY4MiwiaWF0IjoxNzI4MTk3NDgyLCJpc3MiOiJMb2NhbGhvc3RJc3N1ZXIiLCJhdWQiOiJMb2NhbGhvc3RBdWRpZW5jZSJ9.wA2ZvUw1Rc0IopJcNXkAYCzQDlsOcj0zD0DoyVNLBBk
 ###
-GET http://localhost:5125/api/v1/users?pageNumber=1&pageSize=4&sortBy=lastname&sortOrder=desc
-
-###
-
-POST http://localhost:5125/api/v1/users 
+POST http://localhost:5125/api/v1/users/login
 Content-Type: application/json
 
 {
-  "FirstName": "Norah",
-  "LastName": "Alp",
-  "Email": "Norah@example.com",
-  "Password": "securePassword1444",
-  "Phone": "1234567333",
-  "IsAdmin": false
+  "Email": "Ghadah@example.com",
+  "Password": "securePassword1422"
+}
+###
+GET http://localhost:5125/api/v1/users?pageNumber=1&pageSize=9&sortBy=lastname&sortOrder=asc
+
+###
+
+POST http://localhost:5125/api/v1/users/register 
+Content-Type: application/json
+
+{
+  "FirstName": "Ghadah",
+  "LastName": "Aljohani",
+  "Email": "Ghadah@example.com",
+  "Password": "securePassword1422",
+  "Phone": "1234567890",
+  "IsAdmin": true
 }
 
 ###
-Get http://localhost:5125/api/v1/users/459d7de7-2d6d-4eba-95eb-34104f12ba88
+Get http://localhost:5125/api/v1/users/d01e7ab1-2df3-4f25-b35a-ab7d593b50eb
 ###
-Put http://localhost:5125/api/v1/users/459d7de7-2d6d-4eba-95eb-34104f12ba88
+Put http://localhost:5125/api/v1/users/d01e7ab1-2df3-4f25-b35a-ab7d593b50eb
 Content-Type: application/json
 
 {
@@ -29,39 +38,39 @@ Content-Type: application/json
 }
 
 ###
-Delete http://localhost:5125/api/v1/users/459d7de7-2d6d-4eba-95eb-34104f12ba88
+Delete http://localhost:5125/api/v1/users/7e657bd9-209a-4154-a09f-8a804b645bc5
 
 ###
 Get http://localhost:5125/api/v1/addresses
 ###
-Get http://localhost:5125/api/v1/addresses?pageNumber=1&pageSize=6&sortBy=state&sortOrder=desc
+Get http://localhost:5125/api/v1/addresses?pageNumber=1&pageSize=6&sortBy=city&sortOrder=decs
 ###
 POST http://localhost:5125/api/v1/addresses 
 Content-Type: application/json
 
 {
-  "AddressName": "Alazizyah",
-  "StreetNumber": "1234",
-  "StreetName": "Alwaleed",
-  "City": "Madinah",
+  "AddressName": "Alyarmook",
+  "StreetNumber": "123450",
+  "StreetName": "Asfat",
+  "City": "Riyadh",
   "State": "Saudi",
-  "UserId": "bd0dd1fe-d8ab-4826-99dd-10459d6cf66b"
+  "UserId": "2bffde4a-f3ea-4642-bd65-72712bf267f0"
 }
 
 ###
 
-Get http://localhost:5125/api/v1/addresses/2a9ac9dc-5e19-4421-b8eb-197579f1e6af
+Get http://localhost:5125/api/v1/addresses/0a210772-f1ad-458a-a935-b5345d7dc65d
 
 ###
-Put http://localhost:5125/api/v1/addresses/2a9ac9dc-5e19-4421-b8eb-197579f1e6af
+Put http://localhost:5125/api/v1/addresses/0a210772-f1ad-458a-a935-b5345d7dc65d
 Content-Type: application/json
 
 {
-  "addressName": "alazizyah22"
+  "city": "riyadh"
 }
 ###
 
-DELETE  http://localhost:5125/api/v1/addresses/a2decf9f-9799-435a-a4c0-46cd002d99dd
+DELETE  http://localhost:5125/api/v1/addresses/fa5c205a-21e7-4e4a-b2ff-d72a8b566700
 
 ###
 
@@ -74,9 +83,9 @@ Content-Type: application/json
 
 {
     "paymentMethod": "Cash",  
-    "cardNumber": "111111111111111199911",  
+    "cardNumber": "11111111111111119911",  
     "totalPrice":  222,
-    "UserId": "2ac866ba-534e-4319-ac15-eaa46cf42d7d"
+    "UserId": "da73cf72-f66c-41fb-92a6-ad8ce4465082"
   
 }
 
@@ -95,3 +104,53 @@ Content-Type: application/json
 ###
 
 DELETE  http://localhost:5125/api/v1/payments/bf5d20a0-9d83-4feb-965f-542c7a0206f6
+
+###
+GET http://localhost:5125/api/v1/products
+###
+Post http://localhost:5125/api/v1/products
+Content-Type: application/json
+
+{
+  "image": "https://www.jacquemus.sa/ar/تي-شيرت-le-t-shirt-largo/296126945514.html?gad_source=1&gbraid=0AAAAAqM6zO2LxC8suQjNVeCoYzvjnUWIG&gclid=CjwKCAjwx4O4BhAnEiwA42SbVG4KrpjJArOY6TNDOStXGJDgkVy5lkrgT6mRZvZ6BHd4ihzVTKT6YRoCFS4QAvD_BwE",
+  "size": "large",
+  "color": "red",
+  "material": "coton",
+  "quantity": 8
+}
+###
+Get http://localhost:5125/api/v1/products?pageNumber=1&pageSize=3&searchQuery=https://www.jacquemus.sa/ar/تي-شيرت-le-t-shirt-largo/296126945514.html?gad_source=1&gbraid=0AAAAAqM6zO2LxC8suQjNVeCoYzvjnUWIG&gclid=CjwKCAjwx4O4BhAnEiwA42SbVG4KrpjJArOY6TNDOStXGJDgkVy5lkrgT6mRZvZ6BHd4ihzVTKT6YRoCFS4QAvD_BwE
+###
+GET http://localhost:5125/api/v1/products/5cd3fb47-7842-413b-86b5-ffd8e6390ac0
+###
+
+Put http://localhost:5125/api/v1/products/5cd3fb47-7842-413b-86b5-ffd8e6390ac0
+Content-Type: application/json
+
+{
+  "size": "large"
+}
+###
+Delete http://localhost:5125/api/v1/products/9c5e2e2a-3886-414f-980d-be3f2fba9653
+
+###
+Get http://localhost:5125/api/v1/orders
+
+###
+Post http://localhost:5125/api/v1/orders
+Content-Type: application/json
+
+{
+      "UserId": "da73cf72-f66c-41fb-92a6-ad8ce4465082"
+}
+
+###
+Get http://localhost:5125/api/v1/orderDetails
+
+###
+POST http://localhost:5125/api/v1/orderDetails
+Content-Type: application/json
+
+{
+  "productId": "f8d23878-c2fc-4609-a1ef-ef3a5dcae414"
+}

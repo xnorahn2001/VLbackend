@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-public interface IAddress
+public interface IAddressService
 {
     Task<AddressDto> CreateAddressAsyncService(CreateAddressDto newAddress);
     Task<List<AddressDto>> GetAddressesAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder);
@@ -10,7 +10,7 @@ public interface IAddress
     Task<bool> DeleteAddressByIdAsyncService(Guid addressId);
     Task<AddressDto?> UpdateAddressByIdAsyncService(Guid addressId, UpdateAddressDto updateAddress);
 }
-public class AddressService : IAddress
+public class AddressService : IAddressService
 {
     private readonly AppDBContext _appDbContext;
     private readonly IMapper _mapper;
@@ -29,7 +29,7 @@ public class AddressService : IAddress
             var user = await _appDbContext.Users.FirstOrDefaultAsync(c => c.UserId == newAddress.UserId);
             if (user == null)
             {
-                throw new Exception("this user does not exisit");
+                throw new Exception("You can't create address for not exisiting user.");
             }
             address.User = user;
             var addressAdded = await _appDbContext.Addresses.AddAsync(address);

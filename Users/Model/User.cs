@@ -20,5 +20,5 @@ public class User
     public List<Payment> Payments { get; set; }
 
     // one user has many orders
-    // public List<Order> Ordes {get; set;}
+    public List<Order> Orders {get; set;}
 }

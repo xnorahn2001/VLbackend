@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-public interface IPayment
+public interface IPaymentService
 {
     Task<PaymentDto> CreatePaymentAsyncService(CreatePaymentDto newPayment);
     Task<List<PaymentDto>> GetPaymentsAsyncService(int pageNumber, int pageSize, string searchQuery);
@@ -11,7 +11,7 @@ public interface IPayment
     Task<PaymentDto?> UpdatePaymentByIdAsyncService(Guid paymentId, UpdatePaymentDto updatePayment);
 }
 
-public class PaymentService : IPayment
+public class PaymentService : IPaymentService
 {
     private readonly AppDBContext _appDbContext;
     private readonly IMapper _mapper;
@@ -27,13 +27,22 @@ public class PaymentService : IPayment
         try
         {
             var payment = _mapper.Map<Payment>(newPayment);
-            var user = await _appDbContext.Users.FirstOrDefaultAsync(c => c.UserId == newPayment.UserId);
-            if (user == null)
+
+            var paymentUser = payment.User;
+            paymentUser = await _appDbContext.Users.FirstOrDefaultAsync(c => c.UserId == newPayment.UserId);
+            if (paymentUser == null)
             {
-                throw new Exception("This user does not exisit");
+                throw new Exception($"There is no user with this Id {newPayment.UserId}");
             }
-            //payment.TotalPrice = _appDbContext.Products.Sum(p => p.Price);
-            payment.User = user;
+
+            var paymentOrder = payment.Order;
+            paymentOrder = await _appDbContext.Orders.FirstOrDefaultAsync(c => c.OrderId == newPayment.OrderId);
+            if (paymentUser == null)
+            {
+                throw new Exception($"There is no order with this Id {newPayment.OrderId}");
+            }
+
+            payment.TotalPrice = payment.Order.TotalPrice;
             var paymentAdded = await _appDbContext.Payments.AddAsync(payment);
             await _appDbContext.Payments.AddAsync(payment);
             await _appDbContext.SaveChangesAsync();
@@ -52,14 +61,13 @@ public class PaymentService : IPayment
             Console.WriteLine($"An unexpected error occurred: {ex.Message}");
             throw new ApplicationException("An unexpected error occurred. Please try again later.");
         }
-
     }
 
     public async Task<List<PaymentDto>> GetPaymentsAsyncService(int pageNumber, int pageSize, string searchQuery)
     {
         try
         {
-            var payments = await _appDbContext.Payments.Include(p => p.User).ToListAsync();
+            var payments = await _appDbContext.Payments.Include(p => p.User).Include(p => p.Order).ToListAsync();
             // using query to search for all the users whos matching the name otherwise return null
             var filterPayments = payments.AsQueryable();
             if (!string.IsNullOrEmpty(searchQuery))
@@ -155,7 +163,6 @@ public class PaymentService : IPayment
 
             payment.PaymentMethod = updatePayment.PaymentMethod ?? payment.PaymentMethod;
             payment.CardNumber = updatePayment.CardNumber ?? payment.CardNumber;
-            //payment.TotalPrice = updatePayment.TotalPrice ?? payment.TotalPrice;
 
             _appDbContext.Payments.Update(payment);
             await _appDbContext.SaveChangesAsync();
@@ -175,6 +182,5 @@ public class PaymentService : IPayment
             Console.WriteLine($"An unexpected error occurred: {ex.Message}");
             throw new ApplicationException("An unexpected error occurred. Please try again later.");
         }
-
     }
 }

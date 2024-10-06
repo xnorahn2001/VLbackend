@@ -3,10 +3,10 @@
 public class PaymentDto
 {
     public PaymentMethod paymentMethod { get; set; } 
-    public required string CardNumber { get; set; }
-    public decimal TotalPrice { get; set; }
+    public int TotalPrice { get; set; }
 
-    // one user has many payments
-    public Guid UserId { get; set; }
-    public UserDto User { get; set; }
+    // one order has one payment
+    public Guid OrderId { get; set; }
+    public OrderDto Order { get; set; }
+
 }

@@ -11,6 +11,7 @@ public class UpdateUserDto
     public string? LastName { get; set; }
 
     [EmailAddress(ErrorMessage = "Invalid Email Address.")]
+    [MaxLength(100)]
     public string? Email { get; set; }
 
     [StringLength(50, ErrorMessage = "Password must be between 6 and 50 characters.", MinimumLength = 6)]

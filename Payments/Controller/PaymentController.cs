@@ -1,16 +1,18 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController, Route("/api/v1/payments")]
 public class PaymentController : ControllerBase
 {
-    private readonly PaymentService _paymentService;
+    private readonly IPaymentService _paymentService;
 
-    public PaymentController(PaymentService paymentService)
+    public PaymentController(IPaymentService paymentService)
     {
         _paymentService = paymentService;
     }
 
     // Post: "/api/v1/payments" => create new payment
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreatePaymentAsync([FromBody] CreatePaymentDto newPayment)
     {
@@ -39,6 +41,7 @@ public class PaymentController : ControllerBase
     }
 
     // Get: "/api/v1/payments" => get all the payments 
+    [Authorize (Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetPaymentAsync(int pageNumber = 1, int pageSize = 3, string? searchQuery = null)
     {
@@ -62,6 +65,7 @@ public class PaymentController : ControllerBase
     }
 
     // Get: "api/v1/payments/{paymentId}" => get specific payment by id 
+    [Authorize]
     [HttpGet("{paymentId}")]
     public async Task<IActionResult> GetPaymentByIdAsync(Guid paymentId)
     {
@@ -86,6 +90,7 @@ public class PaymentController : ControllerBase
 
     }
     // Delet: "api/v1/payments/{paymentId}" => delete payment by id 
+    [Authorize]
     [HttpDelete("{paymentId}")]
     public async Task<IActionResult> DeletePaymentAsync(Guid paymentId)
     {
@@ -109,6 +114,7 @@ public class PaymentController : ControllerBase
     }
 
     // Put: "api/v1/payments/{paymentId}" => update payment by id 
+    [Authorize]
     [HttpPut("{paymentId}")]
     public async Task<IActionResult> UpdataPaymentByIdAsync(Guid paymentId, [FromBody] UpdatePaymentDto updatePayment)
     {

@@ -7,7 +7,7 @@ public class MappingProfile : Profile
         // mapping for customers
         CreateMap<User, UserDto>();
         CreateMap<UpdateUserDto, UserDto>();
-        CreateMap<CreateUserDto, User>();
+        CreateMap<RegisterUserDto, User>();
 
         // mapping for address
         CreateMap<Address, AddressDto>();
@@ -18,6 +18,20 @@ public class MappingProfile : Profile
         CreateMap<Payment, PaymentDto>();
         CreateMap<UpdatePaymentDto, PaymentDto>();
         CreateMap<CreatePaymentDto, Payment>();
+
+        // mapping for product
+        CreateMap<Product, ProductDto>();
+        CreateMap<UpdateProductDto, ProductDto>();
+        CreateMap<CreateProductDto, Product>();
+
+        // mapping for Order
+        CreateMap<Order, OrderDto>();
+        CreateMap<CreateOrderDto, Order>();
+
+        // mapping for Order Details
+        CreateMap<OrderDetails, OrderDetailsDto>();
+        CreateMap<UpdateOrderDetailsDot, OrderDetailsDto>();
+        CreateMap<CreateOrderDetailsDto, OrderDetails>();
 
     }
 }

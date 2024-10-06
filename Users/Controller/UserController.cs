@@ -1,45 +1,18 @@
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController, Route("/api/v1/users")]
 public class UsersController : ControllerBase
 {
-    private readonly UserService _usersService;
+    private readonly IUserService _usersService;
 
-    public UsersController(UserService usersService)
+    public UsersController(IUserService usersService)
     {
         _usersService = usersService;
     }
 
-    // Post: "/api/v1/users" => create new users
-    [HttpPost]
-    public async Task<IActionResult> CreateUsersAsync([FromBody] CreateUserDto newUser)
-    {
-        if (!ModelState.IsValid)
-        {
-            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-            Console.WriteLine("Validation errors:");
-            errors.ForEach(error => Console.WriteLine(error));
-
-            // Return a custom response with validation errors
-            return BadRequest(new { Message = "Validation failed", Errors = errors });
-        }
-        try
-        {
-            var user = await _usersService.CreateUserAsyncService(newUser);
-            return ApiResponses.Created(user, "User created successfully");
-        }
-        catch (ApplicationException ex)
-        {
-            return StatusCode(500, "Server error: " + ex.Message);
-        }
-        catch (System.Exception ex)
-        {
-            return StatusCode(500, "Server error: " + ex.Message);
-        }
-    }
-
     // Get: "/api/v1/users" => get all the users 
+    [Authorize (Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetUsersAsync(int pageNumber = 1, int pageSize = 3, string? searchQuery = null, string? sortBy = null, string? sortOrder = "asc")
     {
@@ -67,6 +40,7 @@ public class UsersController : ControllerBase
     }
 
     // Get: "api/v1/users/{userId}" => get specific users by id 
+    [Authorize]
     [HttpGet("{userId}")]
     public async Task<IActionResult> GetUserByIdAsync(Guid userId)
     {
@@ -91,6 +65,7 @@ public class UsersController : ControllerBase
 
     }
     // Delet: "api/v1/users/{usersId}" => delete user by id 
+    [Authorize]
     [HttpDelete("{userId}")]
     public async Task<IActionResult> DeleteUserAsync(Guid userId)
     {
@@ -114,6 +89,7 @@ public class UsersController : ControllerBase
     }
 
     // Put: "api/v1/users/{userId}" => update user by id 
+    [Authorize]
     [HttpPut("{userId}")]
     public async Task<IActionResult> UpdataUserByIdAsync(Guid userId, [FromBody] UpdateUserDto updateUser)
     {

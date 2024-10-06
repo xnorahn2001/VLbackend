@@ -1,17 +1,19 @@
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController, Route("/api/v1/addresses")]
 public class AddressController : ControllerBase
 {
-    private readonly AddressService _addressService;
+    private readonly IAddressService _addressService;
 
-    public AddressController(AddressService addressService)
+    public AddressController(IAddressService addressService)
     {
         _addressService = addressService;
     }
 
     // Post: "/api/v1/adresses" => create new address
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateAdressAsync([FromBody] CreateAddressDto newAddress)
     {
@@ -40,6 +42,7 @@ public class AddressController : ControllerBase
     }
 
     // Get: "/api/v1/addresses" => get all the addresses 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetAddressAsync(int pageNumber = 1, int pageSize = 3, string? searchQuery = null, string? sortBy = null, string? sortOrder = "asc")
     {
@@ -63,6 +66,7 @@ public class AddressController : ControllerBase
     }
 
     // Get: "api/v1/addresses/{addressId}" => get specific address by Id
+    [Authorize]
     [HttpGet("{addressId}")]
     public async Task<IActionResult> GetAddressByIdAsync(Guid addressId)
     {
@@ -87,6 +91,7 @@ public class AddressController : ControllerBase
 
     }
     // Delet: "api/v1/address/{addressId}" => delete address by Id 
+    [Authorize]
     [HttpDelete("{addressId}")]
     public async Task<IActionResult> DeleteAddressByIdAsync(Guid addressId)
     {
@@ -110,8 +115,9 @@ public class AddressController : ControllerBase
     }
 
     // Put: "api/v1/address/{addressId}" => update address by Id
+    [Authorize]
     [HttpPut("{addressId}")]
-    public async Task<IActionResult> UpdataAddressByNameAsync(Guid addressId, [FromBody] UpdateAddressDto updateAddress)
+    public async Task<IActionResult> UpdataAddressByIdAsync(Guid addressId, [FromBody] UpdateAddressDto updateAddress)
     {
         if (!ModelState.IsValid)
         {

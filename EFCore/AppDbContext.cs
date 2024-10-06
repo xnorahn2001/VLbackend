@@ -7,6 +7,10 @@ public class AppDBContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Address> Addresses { get; set; }
     public DbSet<Payment> Payments { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderDetails> OrderDetailses { get; set; }
+    public DbSet<Shipment> Shipments { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // fluent api for User
@@ -38,7 +42,11 @@ public class AppDBContext : DbContext
 
         modelBuilder.Entity<Address>().Navigation(s => s.User).AutoInclude();
         modelBuilder.Entity<Payment>().Navigation(s => s.User).AutoInclude();
-
+        // modelBuilder.Entity<Payment>().Navigation(s => s.Order).AutoInclude();
+        modelBuilder.Entity<Order>().Navigation(s => s.User).AutoInclude();
+        modelBuilder.Entity<Order>().Navigation(s => s.OrderDetails).AutoInclude();
+        modelBuilder.Entity<Shipment>().Navigation(s => s.Order).AutoInclude();
+        modelBuilder.Entity<OrderDetails>().Navigation(s => s.Product).AutoInclude();
 
         // fluent api for Payment
         modelBuilder.Entity<Payment>(payment =>
@@ -51,7 +59,42 @@ public class AppDBContext : DbContext
             payment.Property(p => p.TotalPrice).IsRequired();
 
         });
+
+        // fluent api for Product
+        modelBuilder.Entity<Product>(product =>
+        {
+            product.HasKey(p => p.ProductId);
+            product.Property(p => p.ProductId).HasDefaultValueSql("uuid_generate_v4()");
+            product.HasIndex(p => p.Image).IsUnique();
+
+        });
+
+        // fluent api for Order
+        modelBuilder.Entity<Order>(OrdersEntity =>
+        {
+            OrdersEntity.HasKey(s => s.OrderId);
+            OrdersEntity.Property(o => o.OrderId).HasDefaultValueSql("uuid_generate_v4()");
+        });
+
+        // fluent api for OrderDetails
+        modelBuilder.Entity<OrderDetails>(OrdersEntity =>
+        {
+            OrdersEntity.HasKey(s => s.OrdersDetailesId);
+            OrdersEntity.Property(o => o.OrdersDetailesId).HasDefaultValueSql("uuid_generate_v4()");
+        });
+
+        // fluent api for Shipment
+        modelBuilder.Entity<Shipment>(shipment =>
+        {
+            shipment.HasKey(s => s.ShipmentId);
+            shipment.Property(o => o.ShipmentId).HasDefaultValueSql("uuid_generate_v4()");
+        });
+
         modelBuilder.HasPostgresEnum<PaymentMethod>();
+        modelBuilder.HasPostgresEnum<Size>();
+        modelBuilder.HasPostgresEnum<Color>();
+        modelBuilder.HasPostgresEnum<Material>();
+        modelBuilder.HasPostgresEnum<Status>();
 
         // one users has many addresses
         modelBuilder.Entity<User>()
@@ -69,11 +112,35 @@ public class AppDBContext : DbContext
         .OnDelete(DeleteBehavior.Cascade);
 
         // one user has many orders
-        // modelBuilder.Entity<User>()
-        // .HasMany(c => c.Orders)
-        // .WithOne(o => o.User)
-        // .HasForeignKey(o => o.UserId)
-        // .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<User>()
+        .HasMany(c => c.Orders)
+        .WithOne(o => o.User)
+        .HasForeignKey(o => o.UserId)
+        .OnDelete(DeleteBehavior.Cascade);
 
+        // one order has one order details 
+        modelBuilder.Entity<Order>()
+        .HasOne(c => c.OrderDetails)
+        .WithOne(o => o.Order)
+        .HasForeignKey<OrderDetails>(o => o.OrderId);
+
+        // one order has one shipment
+        modelBuilder.Entity<Order>()
+            .HasOne(u => u.Shipment)
+            .WithOne(p => p.Order)
+            .HasForeignKey<Shipment>(p => p.OrderId);
+
+        // one order has one payment
+        modelBuilder.Entity<Order>()
+            .HasOne(u => u.Payment)
+            .WithOne(p => p.Order)
+            .HasForeignKey<Payment>(p => p.OrderId);
+
+        // one product has many order details
+        modelBuilder.Entity<Product>()
+        .HasMany(c => c.OrderDetailses)
+        .WithOne(p => p.Product)
+        .HasForeignKey(p => p.ProductId)
+        .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -1,6 +1,7 @@
 // User Dto to create new user
 using System.ComponentModel.DataAnnotations;
-public class CreateUserDto
+using Microsoft.EntityFrameworkCore;
+public class RegisterUserDto
 {
 
     [Required(ErrorMessage = "FirstName is missing.")]
@@ -13,6 +14,7 @@ public class CreateUserDto
 
     [Required(ErrorMessage = "Email is required.")]
     [EmailAddress(ErrorMessage = "Invalid Email Address.")]
+    [MaxLength(100)]
     public string Email { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Password is required.")]
