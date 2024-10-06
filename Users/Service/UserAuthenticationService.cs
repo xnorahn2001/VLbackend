@@ -30,10 +30,13 @@ namespace UserAuthenticationWebApi2.Services
         {
             try
             {
-                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
-                newUser.Password = hashedPassword;
                 var user = _mapper.Map<User>(newUser);
                 await _appDbContext.Users.AddAsync(user);
+                await _appDbContext.SaveChangesAsync();
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
+                newUser.Password = hashedPassword;
+                user = _mapper.Map<User>(newUser);
+                _appDbContext.Users.Update(user);
                 await _appDbContext.SaveChangesAsync();
                 var userData = _mapper.Map<UserDto>(user);
                 return userData;

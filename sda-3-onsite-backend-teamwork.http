@@ -2,7 +2,7 @@
 GET http://localhost:5125/api/v1/users
 Bearer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiQWRtaW4iLCJuYmYiOjE3MjgxOTc0ODIsImV4cCI6MTcyODIwNDY4MiwiaWF0IjoxNzI4MTk3NDgyLCJpc3MiOiJMb2NhbGhvc3RJc3N1ZXIiLCJhdWQiOiJMb2NhbGhvc3RBdWRpZW5jZSJ9.wA2ZvUw1Rc0IopJcNXkAYCzQDlsOcj0zD0DoyVNLBBk
 ###
-POST http://localhost:5125/api/v1/users/login
+POST https://craftyourownapi.onrender.com/api/v1/users/login
 Content-Type: application/json
 
 {
@@ -14,7 +14,7 @@ GET http://localhost:5125/api/v1/users?pageNumber=1&pageSize=9&sortBy=lastname&s
 
 ###
 
-POST http://localhost:5125/api/v1/users/register 
+POST https://craftyourownapi.onrender.com/api/v1/users/register 
 Content-Type: application/json
 
 {
