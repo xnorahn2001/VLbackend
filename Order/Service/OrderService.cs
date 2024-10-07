@@ -94,6 +94,7 @@ public class OrderService : IOrderService
             shipment.Status = Status.Shipped;
             Random random = new Random();
             shipment.TrackingNumber = random.Next(999999, 99999999);
+            shipment.Order = order;
 
             await _appDbContext.Shipments.AddAsync(shipment);
             _appDbContext.SaveChanges();
