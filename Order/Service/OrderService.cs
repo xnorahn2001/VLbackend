@@ -70,6 +70,9 @@ public class OrderService : IOrderService
 
                 totalPriceOrder += orderDetail.TotalPrice;
                 totalQuantityOrder += orderdetails.Quantity;
+                foundProduct.Quantity -= orderdetails.Quantity;
+                _appDbContext.Products.Update(foundProduct);
+                await _appDbContext.SaveChangesAsync();
             }
             order.TotalPrice = totalPriceOrder;
             order.Quantity = totalQuantityOrder;
