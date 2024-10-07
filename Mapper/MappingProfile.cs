@@ -35,8 +35,14 @@ public class MappingProfile : Profile
 
 
         CreateMap<Order, OrderDto>()
-        .ForMember(dest => dest.Payment , opt => opt.MapFrom(src => src.Payment));
-        // .ForMember(dest => dest.Shipment, opt => opt.MapFrom(src => src.Shipment));
+        .ForMember(dest => dest.Payment, opt => opt.MapFrom(src => src.Payment))
+        .ForMember(dest => dest.Shipment, opt => opt.MapFrom(src => src.Shipment));
+
+
+        // mapping for shipments
+        CreateMap<Shipment, ShipmentDto>();
+        CreateMap<UpdateShipmentDto, ShipmentDto>();
+        CreateMap<CreateShipmentDto, ShipmentDto>();
 
     }
 }

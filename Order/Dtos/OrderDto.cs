@@ -12,6 +12,7 @@ public class OrderDto
     public List<OrderDetails> OrderDetails { get; set; }
 
     public PaymentDto Payment { get; set; }
+    public ShipmentDto Shipment { get; set; }
 
 
 }
