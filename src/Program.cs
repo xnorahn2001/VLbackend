@@ -25,6 +25,18 @@ builder.Services.AddScoped<IShipmentService, ShipmentService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowSpecificOrigins", builder =>
+        {
+            builder.WithOrigins("http://localhost:5173"
+                    )
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        });
+    });
+
 //Services Controller Configuration with JsonIgnore
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -129,18 +141,9 @@ app.Use(async (context, next) =>
     Console.WriteLine($"Time Taken: {stopwatch.ElapsedMilliseconds}");
 });
 
-builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("AllowSpecificOrigins", builder =>
-        {
-            builder.WithOrigins("http://localhost:5173"
-                    )
-                  .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .AllowCredentials();
-        });
-    });
-app.UseCors("MyAllowSpecificOrigins");
+
+
+app.UseCors("AllowSpecificOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();
