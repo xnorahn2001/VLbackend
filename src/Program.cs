@@ -129,19 +129,18 @@ app.Use(async (context, next) =>
     Console.WriteLine($"Time Taken: {stopwatch.ElapsedMilliseconds}");
 });
 
-// builder.Services.AddCors(options =>
-//     {
-//         options.AddPolicy("AllowSpecificOrigins", builder =>
-//         {
-//             builder.WithOrigins("http://localhost:3000",
-//                                 "https://www.yourclientapp.com"
-//                     )
-//                   .AllowAnyMethod()
-//                   .AllowAnyHeader()
-//                   .AllowCredentials();
-//         });
-//     });
-// app.UseCors("MyAllowSpecificOrigins");
+builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowSpecificOrigins", builder =>
+        {
+            builder.WithOrigins("http://localhost:5173"
+                    )
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        });
+    });
+app.UseCors("MyAllowSpecificOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();

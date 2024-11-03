@@ -4,7 +4,11 @@ using System.Text.Json.Serialization;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Size
 {
-    Small,
-    Large,
-    Medium
+    S,
+    L,
+    M,
+    XL,
+    XXL,
+    Onesize
+
 }

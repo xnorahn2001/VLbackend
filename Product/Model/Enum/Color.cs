@@ -8,5 +8,15 @@ public enum Color
     Blue,
     Black,
     White,
-    Green
+    Green,
+    Brown,
+    Yellow,
+    Purple,
+    Orange,
+    Pink,
+    Grey,
+    Turquoise,
+    Silver,
+    Gold,
+    
 }

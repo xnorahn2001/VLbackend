@@ -2,7 +2,7 @@
 GET http://localhost:5125/api/v1/users
 Bearer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiQWRtaW4iLCJuYmYiOjE3MjgxOTc0ODIsImV4cCI6MTcyODIwNDY4MiwiaWF0IjoxNzI4MTk3NDgyLCJpc3MiOiJMb2NhbGhvc3RJc3N1ZXIiLCJhdWQiOiJMb2NhbGhvc3RBdWRpZW5jZSJ9.wA2ZvUw1Rc0IopJcNXkAYCzQDlsOcj0zD0DoyVNLBBk
 ###
-POST https://craftyourown.onrender.com/api/v1/users/login
+POST http://localhost:5125/api/v1/users/login
 Content-Type: application/json
 
 {
@@ -14,15 +14,15 @@ GET http://localhost:5125/api/v1/users?pageNumber=1&pageSize=9&sortBy=lastname&s
 
 ###
 
-POST https://craftyourown.onrender.com/api/v1/users/register 
+POST https://sda-3-onsite-backend-teamwork-q22o.onrender.com/api/v1/users/register 
 Content-Type: application/json
 
 {
-  "FirstName": "besho",
+  "FirstName": "samar",
   "LastName": "Aljohani",
   "Email": "sambeshoar@example.com",
   "Password": "securePassword1422",
-  "Phone": "1234567000",
+  "Phone": "1234567700",
   "IsAdmin": true
 }
 
@@ -112,9 +112,9 @@ Post http://localhost:5125/api/v1/products
 Content-Type: application/json
 
 {
-  "image": "https://www.jacquemus.sa/ar/تي-شيرت-le-t-shirt-largo/296126945514.html?gad_source=1&gbraid=0AAAAAqM6zO2LxC8suQjNVeCoYzvjnUWIG&gclid=CjwKCAjwx4O4BhAnEiwA42SbVG4KrpjJArOY6TNDOStXGJDgkVy5lkrgT6mRZvZ6BHd4ihzVTKT6YRoCFS4QAvD_BwE",
-  "size": "large",
-  "color": "red",
+  "image": "https://i.pinimg.com/564x/37/f9/f4/37f9f49bd9b64d827c24d2c444d77ebb.jpg",
+  "size": "Large",
+  "color": "Brown",
   "material": "coton",
   "quantity": 8
 }

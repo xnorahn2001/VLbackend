@@ -37,7 +37,6 @@ public class ProductController : ControllerBase
     }
 
     // Get: "/api/v1/products" => get all products
-    [Authorize (Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetProductsAsync(int pageNumber = 1, int pageSize = 3, string? searchQuery = null, string? sortBy = null, string? sortOrder = "asc")
     {

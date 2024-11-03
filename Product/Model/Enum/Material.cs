@@ -6,5 +6,12 @@ public enum Material
 {
     Coton,
     Crepe,
-    Silk
+    Silk,
+    Linen,
+    Polyester,
+    Wool,
+    Cashmere,
+    Leather,
+    Mesh,
+    Knit
 }
