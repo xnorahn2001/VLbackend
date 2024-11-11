@@ -4,14 +4,13 @@ using System.Text.Json.Serialization;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Material
 {
-    Coton,
-    Crepe,
-    Silk,
-    Linen,
-    Polyester,
-    Wool,
-    Cashmere,
-    Leather,
-    Mesh,
-    Knit
+    Plastic,
+    Glass,
+    Metal,
+    Titanium,
+    Flexon,
+    Aluminum,
+    Wooden,
+    Carbon,
+    Rimless
 }

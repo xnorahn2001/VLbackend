@@ -6,9 +6,8 @@ public enum Size
 {
     S,
     L,
-    M,
-    XL,
-    XXL,
-    Onesize
+    M
+    
+    
 
 }

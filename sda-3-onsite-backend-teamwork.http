@@ -18,12 +18,12 @@ POST https://sda-3-onsite-backend-teamwork-q22o.onrender.com/api/v1/users/regist
 Content-Type: application/json
 
 {
-  "FirstName": "samar",
-  "LastName": "Aljohani",
-  "Email": "sambeshoar@example.com",
-  "Password": "securePassword1422",
-  "Phone": "1234567700",
-  "IsAdmin": true
+  "FirstName": "Alaa  ",
+  "LastName": "Najdi",
+  "Email": "Alla@hotmail.com",
+  "Password": "Aa98765432",
+  "Phone": "0987654332",
+  "IsAdmin": false
 }
 
 ###
@@ -112,10 +112,10 @@ Post http://localhost:5125/api/v1/products
 Content-Type: application/json
 
 {
-  "image": "https://i.pinimg.com/564x/37/f9/f4/37f9f49bd9b64d827c24d2c444d77ebb.jpg",
-  "size": "Large",
-  "color": "Brown",
-  "material": "coton",
+  "image": "https://i.pinimg.com/564x/cf/f5/93/cff593d98a31e22cbd8e1667d5d0ff10.jpg",
+  "size": "L",
+  "color": "Black",
+  "material": "Metal",
   "quantity": 8
 }
 ###
