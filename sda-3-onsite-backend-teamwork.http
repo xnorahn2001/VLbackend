@@ -33,7 +33,7 @@ Put http://localhost:5125/api/v1/users/d01e7ab1-2df3-4f25-b35a-ab7d593b50eb
 Content-Type: application/json
 
 {
-  "lastName": "Deef Allah",
+  "lastName": "Naif Aljbreen",
   "phone": "1234567890"
 }
 
@@ -112,11 +112,13 @@ Post http://localhost:5125/api/v1/products
 Content-Type: application/json
 
 {
-  "image": "https://i.pinimg.com/564x/cf/f5/93/cff593d98a31e22cbd8e1667d5d0ff10.jpg",
-  "size": "L",
-  "color": "Black",
+  "image": "https://i.pinimg.com/736x/49/78/bc/4978bc339abd87b6ea2f851a1cabf854.jpg",
+  "size": "S",
+  "color": "Green",
   "material": "Metal",
-  "quantity": 8
+  "quantity": 9,
+  "price": 100,
+  "name": "Greeny Glasses ",
 }
 ###
 Get http://localhost:5125/api/v1/products?pageNumber=1&pageSize=3&searchQuery=https://www.jacquemus.sa/ar/تي-شيرت-le-t-shirt-largo/296126945514.html?gad_source=1&gbraid=0AAAAAqM6zO2LxC8suQjNVeCoYzvjnUWIG&gclid=CjwKCAjwx4O4BhAnEiwA42SbVG4KrpjJArOY6TNDOStXGJDgkVy5lkrgT6mRZvZ6BHd4ihzVTKT6YRoCFS4QAvD_BwE

@@ -10,12 +10,12 @@ public class ProductController : ControllerBase
     public ProductController(IProductService productService)
     {
         _productService = productService;
+    
     }
-
     // Post: "/api/v1/products" => create new product
     [HttpPost]
-    public async Task<IActionResult> CreateProductAsync([FromBody] CreateProductDto newProduct)
-    {
+       public async Task<IActionResult> CreateProductAsync([FromBody] CreateProductDto newProduct)    
+{
         if (!ModelState.IsValid)
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();

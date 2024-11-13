@@ -8,6 +8,8 @@ public class UpdateProductDto
 
     public Color? Color { get; set; }
 
+  
+
     public Material? Material { get; set; }
     public int Quantity { get; set; }
 }

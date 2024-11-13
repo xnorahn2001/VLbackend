@@ -67,7 +67,7 @@ public class ProductService : IProductService
                 "size" => sortOrder == "desc" ? filterProduct.OrderByDescending(p => p.Size) : filterProduct.OrderBy(p => p.Size),
                 "color" => sortOrder == "desc" ? filterProduct.OrderByDescending(p => p.Color) : filterProduct.OrderBy(p => p.Color),
                 "meterial" => sortOrder == "desc" ? filterProduct.OrderByDescending(p => p.Material) : filterProduct.OrderBy(p => p.Material),
-                _ => filterProduct.OrderBy(p => p.Material) // default 
+                _=> filterProduct.OrderBy(p => p.Material) // default 
             };
             // return the result in pagination 
             var paginationResult = filterProduct.Skip((pageNumber - 1) * pageSize).Take(pageSize);
@@ -152,7 +152,8 @@ public class ProductService : IProductService
             product.Color = updateProduct.Color ?? product.Color;
             product.Material = updateProduct.Material ?? product.Material;
             product.Image = updateProduct.Image ?? product.Image;
-
+            // product.Price = updateProduct.Price ?? product.Price;
+        
             _appDbContext.Products.Update(product);
             await _appDbContext.SaveChangesAsync();
 

@@ -17,5 +17,10 @@ public class CreateProductDto
     
     [Required(ErrorMessage = "Quantity is missing.")]
     public int Quantity { get; set; }
+     
+     
+    // [Required(ErrorMessage = "Price is missing.")]
+
+    // public decimal Price {get; set;}
 
 }
